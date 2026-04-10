@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>달빛아래펜션 · 네이버 플레이스 매출 누수 진단 리포트</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Malgun Gothic','Apple SD Gothic Neo',sans-serif;background:#F4F5F7;padding:20px;color:#1a1a2e;}
+.page{max-width:900px;margin:0 auto;}
+.card{background:#fff;border-radius:12px;padding:20px;margin-bottom:14px;}
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px;}
+.kpi{background:#fff;border-radius:12px;padding:18px 14px;text-align:center;}
+.kpi.danger{background:#fff5f5;border:1.5px solid #fecaca;}
+.kpi.safe{background:#f0fdf4;border:1.5px solid #bbf7d0;}
+.kpi-val{font-size:24px;font-weight:900;line-height:1.1;margin:6px 0 3px;}
+.kpi-label{font-size:11px;color:#6b7280;}
+.urgent{background:#fff5f5;border:2px solid #E5503A;border-radius:12px;padding:20px;margin-bottom:14px;}
+.urgent-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px;}
+.uc{background:#fff;border-radius:10px;padding:14px;text-align:center;border:1px solid #fde8e8;}
+.uc.fire{background:#E5503A;color:#fff;border-color:#E5503A;}
+.uc-val{font-size:20px;font-weight:900;margin:5px 0 3px;}
+.uc-label{font-size:10px;}
+/* 경쟁사·격차 섹션 */
+.compare-section{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+/* 격차 시각화 */
+.gap-bar-wrap{margin-bottom:16px;}
+.gap-bar-label{font-size:12px;font-weight:700;color:#374151;margin-bottom:6px;}
+.gap-bar-track{position:relative;height:28px;background:#f3f4f6;border-radius:8px;overflow:hidden;margin-bottom:4px;}
+.gap-bar-comp{position:absolute;left:0;top:0;height:100%;border-radius:8px;display:flex;align-items:center;justify-content:flex-end;padding-right:8px;}
+.gap-bar-mine{position:absolute;left:0;top:0;height:100%;border-radius:8px;display:flex;align-items:center;justify-content:flex-end;padding-right:8px;}
+.gap-bar-num{font-size:11px;font-weight:900;color:white;}
+.gap-bar-info{display:flex;justify-content:space-between;font-size:11px;color:#6b7280;}
+/* 효과 섹션 */
+.effect-section{background:#fff;border-radius:12px;padding:24px;margin-bottom:14px;}
+.effect-header{text-align:center;margin-bottom:20px;}
+.effect-header h3{font-size:17px;font-weight:900;color:#1a1a2e;margin-bottom:4px;}
+.effect-header p{font-size:12px;color:#6b7280;}
+.effect-grid{display:grid;grid-template-columns:1fr 44px 1fr;gap:0;align-items:center;margin-bottom:20px;}
+.effect-col{border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:14px;}
+.effect-col.now{background:#fff5f5;border:2px solid #fecaca;}
+.effect-col.after{background:#f0fdf4;border:2px solid #bbf7d0;}
+.effect-col-title{font-size:13px;font-weight:900;text-align:center;padding:9px;border-radius:8px;margin-bottom:4px;}
+.effect-col.now .effect-col-title{background:#fecaca;color:#E5503A;}
+.effect-col.after .effect-col-title{background:#bbf7d0;color:#065f46;}
+.effect-arrow{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:#9ca3af;}
+.effect-item-label{font-size:11px;color:#6b7280;font-weight:600;margin-bottom:2px;}
+.effect-item-val{font-size:20px;font-weight:900;line-height:1.1;}
+/* 특가 박스 */
+.special-pkg{background:#1a1a2e;border-radius:14px;padding:20px 24px;margin-bottom:20px;position:relative;overflow:hidden;}
+.special-pkg::before{content:'';position:absolute;top:0;right:0;width:200px;height:100%;background:linear-gradient(90deg,transparent,#E5503A22);}
+.special-badge{display:inline-block;background:#E5503A;color:white;font-size:11px;font-weight:800;padding:4px 12px;border-radius:20px;margin-bottom:10px;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.7;}}
+.special-orig{font-size:13px;color:#9ca3af;text-decoration:line-through;margin-bottom:4px;}
+.special-price{font-size:36px;font-weight:900;color:#E5503A;line-height:1;}
+.special-discount{display:inline-block;background:#E5503A;color:white;font-size:12px;font-weight:800;padding:3px 10px;border-radius:6px;margin-left:10px;vertical-align:middle;}
+.special-desc{font-size:12px;color:#9ca3af;margin-top:8px;}
+/* 이유 */
+.reason-section{background:#fff;border-radius:12px;padding:20px;margin-bottom:14px;}
+.reason-item{display:flex;gap:12px;padding:12px 14px;border-radius:10px;margin-bottom:8px;border:1px solid #f3f4f6;}
+.reason-item:last-child{background:#fff5f5;border:1.5px solid #fecaca;margin-bottom:0;}
+.reason-num{width:28px;height:28px;border-radius:50%;background:#E5503A;color:white;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.reason-title{font-size:13px;font-weight:800;margin-bottom:4px;}
+.reason-desc{font-size:11px;color:#6b7280;line-height:1.7;}
+.roi-bar{background:#1a1a2e;border-radius:12px;padding:20px 26px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:14px;}
+.roi-badges{display:flex;gap:10px;flex-wrap:wrap;}
+.rbg{background:#2EAD7B;color:#fff;border-radius:10px;padding:12px 18px;text-align:center;}
+.rbr{background:#E5503A;color:#fff;border-radius:10px;padding:12px 18px;text-align:center;}
+.rb-val{font-size:22px;font-weight:900;line-height:1;}
+.rb-label{font-size:10px;margin-top:3px;}
+.agent-box{background:#fff;border-radius:12px;border-top:3px solid #E5503A;padding:20px 22px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;margin-bottom:14px;}
+.contact-tel{display:inline-block;padding:9px 16px;background:#1a1a2e;color:#fff;border-radius:8px;font-weight:700;font-size:13px;text-decoration:none;margin-right:8px;}
+.contact-kk{display:inline-block;padding:9px 16px;background:#FEE500;color:#191919;border-radius:8px;font-weight:700;font-size:13px;text-decoration:none;}
+.footer-bar{display:flex;justify-content:space-between;font-size:10px;color:#9ca3af;padding:12px 4px;}
+@media(max-width:640px){.kpi-grid,.urgent-grid{grid-template-columns:1fr 1fr;}.compare-section{grid-template-columns:1fr;}.effect-grid{grid-template-columns:1fr;}.effect-arrow{display:none;}}
+
+/* ===== 인쇄 스타일 ===== */
+@media print {
+  @page {
+    size: A4;
+    margin: 10mm 10mm 10mm 10mm;
+    /* 브라우저 기본 머리글/바닥글(URL, 날짜, 페이지번호) 제거 */
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+  @page :first {
+    margin-top: 0;
+  }
+  html, body {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+    background: white !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    font-size: 11px !important;
+  }
+  .page {
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  /* 핵심: 카드/섹션이 페이지 경계에서 잘리지 않도록 */
+  .card,
+  .kpi-grid,
+  .urgent,
+  .urgent-grid,
+  .effect-section,
+  .effect-grid,
+  .special-pkg,
+  .ad-compare,
+  .reason-item,
+  .roi-bar,
+  .agent-box,
+  .compare-section,
+  .comp-block,
+  .gap-bar-wrap {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+  /* reason-section은 페이지에 걸쳐 흐르도록 허용 (개별 reason-item만 보호) */
+  .reason-section {
+    page-break-inside: auto !important;
+    break-inside: auto !important;
+  }
+  /* 마지막 요소 뒤 불필요한 빈 페이지 방지 */
+  .footer-bar {
+    page-break-after: avoid !important;
+    break-after: avoid !important;
+  }
+  /* 그림자/테두리 정리 */
+  .card {
+    box-shadow: none !important;
+    border: 1px solid #e5e7eb !important;
+  }
+  /* KPI 그리드 인쇄 시 한 줄 유지 */
+  .kpi-grid {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+  .urgent-grid {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+  /* 비교 섹션 2열 유지 */
+  .compare-section {
+    grid-template-columns: 1fr 1fr !important;
+  }
+  /* 효과 비교 3열 유지 */
+  .effect-grid {
+    grid-template-columns: 1fr 44px 1fr !important;
+  }
+  .effect-arrow {
+    display: flex !important;
+  }
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- 헤더 -->
+<div class="card" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;border-bottom:3px solid #E5503A;border-radius:12px 12px 0 0;margin-bottom:0;padding:20px 22px;">
+  <div>
+    <h1 style="font-size:19px;font-weight:900;margin-bottom:4px;">달빛아래펜션 · 네이버 플레이스 매출 누수 진단 리포트</h1>
+    <p style="font-size:12px;color:#6b7280;">📍 충남 보령시 고잠2길 4-27 · 숙박 / 펜션 / 호텔</p>
+  </div>
+  <div style="text-align:center;">
+    <div style="width:68px;height:68px;border-radius:50%;border:3px solid #F59E0B;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+      <div style="font-size:26px;font-weight:900;color:#F59E0B;line-height:1;">61</div>
+      <div style="font-size:9px;color:#6b7280;">점</div>
+    </div>
+    <div style="font-size:10px;color:#6b7280;margin-top:4px;">플레이스 경쟁력 지수</div>
+  </div>
+</div>
+
+<!-- KPI -->
+<div class="kpi-grid" style="margin-top:14px;">
+  <div class="kpi">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style="margin:0 auto 4px;display:block;"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" stroke="#2B5CE6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <div class="kpi-val" style="color:#2B5CE6;">921</div>
+    <div class="kpi-label">방문자 리뷰</div>
+  </div>
+  <div class="kpi">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style="margin:0 auto 4px;display:block;"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" stroke="#2B5CE6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><polyline points="14 2 14 8 20 8" stroke="#2B5CE6" stroke-width="2"/></svg>
+    <div class="kpi-val" style="color:#2B5CE6;">67</div>
+    <div class="kpi-label">블로그 리뷰</div>
+  </div>
+  <div class="kpi danger">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style="margin:0 auto 4px;display:block;"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" stroke="#E5503A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="12" y1="9" x2="12" y2="13" stroke="#E5503A" stroke-width="2" stroke-linecap="round"/><line x1="12" y1="17" x2="12.01" y2="17" stroke="#E5503A" stroke-width="2" stroke-linecap="round"/></svg>
+    <div class="kpi-val" style="color:#E5503A;">547개</div>
+    <div class="kpi-label">블로그 리뷰 부족분</div>
+  </div>
+  <div class="kpi danger">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style="margin:0 auto 4px;display:block;"><text x="12" y="17" text-anchor="middle" font-size="16" font-weight="900" fill="#E5503A" font-family="Malgun Gothic">₩</text></svg>
+    <div class="kpi-val" style="color:#E5503A;">3024만원</div>
+    <div class="kpi-label">연간 기회비용 손실</div>
+  </div>
+</div>
+
+<!-- 경쟁사 비교 + 격차 시각화 (개선) -->
+<div class="compare-section">
+  <div class="card">
+    <div style="font-size:13px;font-weight:800;margin-bottom:14px;">📊 경쟁사 vs 달빛아래펜션 비교</div>
+    <div style="border:1.5px solid #e5e7eb;border-radius:12px;overflow:hidden;margin-bottom:10px;">
+      <div style="display:grid;grid-template-columns:1fr 44px 1fr;">
+        <div style="padding:14px;background:#f9fafb;">
+          <div style="font-size:11px;color:#6b7280;font-weight:700;margin-bottom:8px;">🏪 라바풀빌라 · 숙박/펜션</div>
+          <div style="margin-bottom:6px;"><span style="font-size:11px;color:#6b7280;">블로그 리뷰</span><br><b style="font-size:18px;color:#374151;">614개</b></div>
+          <div style="margin-bottom:6px;"><span style="font-size:11px;color:#6b7280;">방문자 리뷰</span><br><b style="font-size:18px;color:#374151;">358개</b></div>
+          <div style="margin-top:8px;padding:6px 8px;background:#f0fdf4;border-radius:6px;font-size:11px;color:#2EAD7B;font-weight:700;">검색 상위 유지 중 ✅</div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:center;background:white;">
+          <div style="background:#1a1a2e;color:white;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:11px;">VS</div>
+        </div>
+        <div style="padding:14px;background:white;">
+          <div style="font-size:11px;color:#E5503A;font-weight:700;margin-bottom:8px;">📍 달빛아래펜션 현재</div>
+          <div style="margin-bottom:6px;"><span style="font-size:11px;color:#6b7280;">블로그 리뷰</span><br>
+            <b style="font-size:18px;color:#E5503A;">67개</b>
+            <span style="display:inline-block;margin-left:4px;padding:1px 6px;background:#fff5f5;color:#E5503A;border-radius:4px;font-size:11px;font-weight:700;">↓ 부족</span>
+          </div>
+          <div style="margin-bottom:6px;"><span style="font-size:11px;color:#6b7280;">방문자 리뷰</span><br>
+            <b style="font-size:18px;color:#2EAD7B;">921개</b>
+            <span style="display:inline-block;margin-left:4px;padding:1px 6px;background:#f0fdf4;color:#2EAD7B;border-radius:4px;font-size:11px;font-weight:700;">✅ 우위</span>
+          </div>
+          <div style="margin-top:8px;padding:6px 8px;background:#fff5f5;border-radius:6px;font-size:11px;color:#E5503A;font-weight:700;">검색에서 밀리는 중 ⚠️</div>
+        </div>
+      </div>
+      <!-- 경쟁력 점수 게이지 -->
+      <div style="padding:14px 16px;border-top:1px solid #f3f4f6;background:#fafafa;">
+        <div style="font-size:11px;font-weight:800;color:#374151;margin-bottom:10px;">📊 플레이스 경쟁력 점수 비교</div>
+        <div style="margin-bottom:8px;">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+            <span style="font-size:11px;font-weight:700;color:#374151;">라바풀빌라</span>
+            <span style="font-size:11px;font-weight:900;color:#2EAD7B;">67점</span>
+          </div>
+          <div style="height:16px;background:#e5e7eb;border-radius:8px;overflow:hidden;">
+            <div style="height:100%;width:107px;max-width:100%;background:linear-gradient(90deg,#2EAD7B,#059669);border-radius:8px;display:flex;align-items:center;justify-content:flex-end;padding-right:6px;">
+              <span style="font-size:10px;font-weight:900;color:white;">67</span>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:10px;">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+            <span style="font-size:11px;font-weight:700;color:#374151;">달빛아래펜션</span>
+            <span style="font-size:11px;font-weight:900;color:#E5503A;">48점</span>
+          </div>
+          <div style="height:16px;background:#e5e7eb;border-radius:8px;overflow:hidden;">
+            <div style="height:100%;width:77px;max-width:100%;background:linear-gradient(90deg,#2B5CE6,#E5503A);border-radius:8px;display:flex;align-items:center;justify-content:flex-end;padding-right:6px;">
+              <span style="font-size:10px;font-weight:900;color:white;">48</span>
+            </div>
+          </div>
+        </div>
+        <!-- 검색 노출 비교 -->
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:10px;background:white;border-radius:8px;border:1px solid #e5e7eb;">
+          <div style="text-align:center;">
+            <div style="font-size:10px;color:#6b7280;margin-bottom:2px;">라바풀빌라 월 노출</div>
+            <div style="font-size:13px;font-weight:900;color:#374151;">276,300회</div>
+          </div>
+          <div style="text-align:center;border-left:1px solid #e5e7eb;border-right:1px solid #e5e7eb;">
+            <div style="font-size:10px;color:#6b7280;margin-bottom:2px;">달빛아래펜션 월 노출</div>
+            <div style="font-size:13px;font-weight:900;color:#E5503A;">30,150회</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-size:10px;color:#6b7280;margin-bottom:2px;">노출 손실</div>
+            <div style="font-size:13px;font-weight:900;color:#E5503A;">-246,150회</div>
+          </div>
+        </div>
+      </div>
+    </div><div style="border:1.5px solid #e5e7eb;border-radius:12px;overflow:hidden;margin-bottom:10px;">
+      <div style="display:grid;grid-template-columns:1fr 44px 1fr;">
+        <div style="padding:14px;background:#f9fafb;">
+          <div style="font-size:11px;color:#6b7280;font-weight:700;margin-bottom:8px;">🏪 대천리조텔 · 숙박/펜션</div>
+          <div style="margin-bottom:6px;"><span style="font-size:11px;color:#6b7280;">블로그 리뷰</span><br><b style="font-size:18px;color:#374151;">104개</b></div>
+          <div style="margin-bottom:6px;"><span style="font-size:11px;color:#6b7280;">방문자 리뷰</span><br><b style="font-size:18px;color:#374151;">569개</b></div>
+          <div style="margin-top:8px;padding:6px 8px;background:#f0fdf4;border-radius:6px;font-size:11px;color:#2EAD7B;font-weight:700;">검색 상위 유지 중 ✅</div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:center;background:white;">
+          <div style="background:#1a1a2e;color:white;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:11px;">VS</div>
+        </div>
+        <div style="padding:14px;background:white;">
+          <div style="font-size:11px;color:#E5503A;font-weight:700;margin-bottom:8px;">📍 달빛아래펜션 현재</div>
+          <div style="margin-bottom:6px;"><span style="font-size:11px;color:#6b7280;">블로그 리뷰</span><br>
+            <b style="font-size:18px;color:#E5503A;">67개</b>
+            <span style="display:inline-block;margin-left:4px;padding:1px 6px;background:#fff5f5;color:#E5503A;border-radius:4px;font-size:11px;font-weight:700;">↓ 부족</span>
+          </div>
+          <div style="margin-bottom:6px;"><span style="font-size:11px;color:#6b7280;">방문자 리뷰</span><br>
+            <b style="font-size:18px;color:#2EAD7B;">921개</b>
+            <span style="display:inline-block;margin-left:4px;padding:1px 6px;background:#f0fdf4;color:#2EAD7B;border-radius:4px;font-size:11px;font-weight:700;">✅ 우위</span>
+          </div>
+          <div style="margin-top:8px;padding:6px 8px;background:#fff5f5;border-radius:6px;font-size:11px;color:#E5503A;font-weight:700;">검색에서 밀리는 중 ⚠️</div>
+        </div>
+      </div>
+      <!-- 경쟁력 점수 게이지 -->
+      <div style="padding:14px 16px;border-top:1px solid #f3f4f6;background:#fafafa;">
+        <div style="font-size:11px;font-weight:800;color:#374151;margin-bottom:10px;">📊 플레이스 경쟁력 점수 비교</div>
+        <div style="margin-bottom:8px;">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+            <span style="font-size:11px;font-weight:700;color:#374151;">대천리조텔</span>
+            <span style="font-size:11px;font-weight:900;color:#2EAD7B;">56점</span>
+          </div>
+          <div style="height:16px;background:#e5e7eb;border-radius:8px;overflow:hidden;">
+            <div style="height:100%;width:90px;max-width:100%;background:linear-gradient(90deg,#2EAD7B,#059669);border-radius:8px;display:flex;align-items:center;justify-content:flex-end;padding-right:6px;">
+              <span style="font-size:10px;font-weight:900;color:white;">56</span>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:10px;">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+            <span style="font-size:11px;font-weight:700;color:#374151;">달빛아래펜션</span>
+            <span style="font-size:11px;font-weight:900;color:#E5503A;">48점</span>
+          </div>
+          <div style="height:16px;background:#e5e7eb;border-radius:8px;overflow:hidden;">
+            <div style="height:100%;width:77px;max-width:100%;background:linear-gradient(90deg,#2B5CE6,#E5503A);border-radius:8px;display:flex;align-items:center;justify-content:flex-end;padding-right:6px;">
+              <span style="font-size:10px;font-weight:900;color:white;">48</span>
+            </div>
+          </div>
+        </div>
+        <!-- 검색 노출 비교 -->
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:10px;background:white;border-radius:8px;border:1px solid #e5e7eb;">
+          <div style="text-align:center;">
+            <div style="font-size:10px;color:#6b7280;margin-bottom:2px;">대천리조텔 월 노출</div>
+            <div style="font-size:13px;font-weight:900;color:#374151;">46,800회</div>
+          </div>
+          <div style="text-align:center;border-left:1px solid #e5e7eb;border-right:1px solid #e5e7eb;">
+            <div style="font-size:10px;color:#6b7280;margin-bottom:2px;">달빛아래펜션 월 노출</div>
+            <div style="font-size:13px;font-weight:900;color:#E5503A;">30,150회</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-size:10px;color:#6b7280;margin-bottom:2px;">노출 손실</div>
+            <div style="font-size:13px;font-weight:900;color:#E5503A;">-16,650회</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div style="font-size:13px;font-weight:800;margin-bottom:16px;">📈 리뷰 격차 시각화</div>
+
+    <!-- 블로그 리뷰 바차트 -->
+    <div class="gap-bar-wrap">
+      <div class="gap-bar-label">📝 블로그 리뷰 비교</div>
+      <div style="margin-bottom:4px;">
+        <div style="font-size:11px;color:#6b7280;margin-bottom:3px;">경쟁사 (614개)</div>
+        <div class="gap-bar-track">
+          <div class="gap-bar-comp" style="width:240px;background:#d1d5db;">
+            <span class="gap-bar-num" style="color:#374151;">614</span>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:11px;color:#6b7280;margin-bottom:3px;">내 매장 (67개)</div>
+        <div class="gap-bar-track">
+          <div class="gap-bar-mine" style="width:26px;background:linear-gradient(90deg,#2B5CE6,#E5503A);min-width:30px;">
+            <span class="gap-bar-num">67</span>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:6px;padding:6px 10px;background:#fff5f5;border-radius:6px;font-size:11px;color:#E5503A;font-weight:700;">⚠️ 경쟁사보다 547개 부족 → 월 검색 노출 246,150회 손실</div>
+    </div>
+
+    <!-- 방문자 리뷰 바차트 -->
+    <div class="gap-bar-wrap">
+      <div class="gap-bar-label">💬 방문자 리뷰 비교</div>
+      <div style="margin-bottom:4px;">
+        <div style="font-size:11px;color:#6b7280;margin-bottom:3px;">경쟁사 (358개)</div>
+        <div class="gap-bar-track">
+          <div class="gap-bar-comp" style="width:93px;background:#d1d5db;">
+            <span class="gap-bar-num" style="color:#374151;">358</span>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:11px;color:#6b7280;margin-bottom:3px;">내 매장 (921개)</div>
+        <div class="gap-bar-track">
+          <div class="gap-bar-mine" style="width:240px;background:#2EAD7B;min-width:30px;">
+            <span class="gap-bar-num">921</span>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:6px;padding:6px 10px;background:#f0fdf4;border-radius:6px;font-size:11px;color:#2EAD7B;font-weight:700;">✅ 경쟁사보다 0개 앞서 있습니다</div>
+    </div>
+
+    <!-- 검색 노출 요약 -->
+    <div style="background:#1a1a2e;border-radius:10px;padding:14px;text-align:center;">
+      <div style="font-size:11px;color:#9ca3af;margin-bottom:4px;">경쟁사보다 매달 덜 검색되는 횟수</div>
+      <div style="font-size:26px;font-weight:900;color:#E5503A;">246,150회</div>
+      <div style="font-size:11px;color:#9ca3af;margin-top:4px;">= 라바풀빌라이 내 매장 대신 노출되는 횟수</div>
+    </div>
+  </div>
+</div>
+
+<!-- 긴급 알림 -->
+<div class="urgent">
+  <div style="font-size:16px;font-weight:900;color:#1a1a2e;margin-bottom:3px;">
+    ⚠️ 지금 이 순간에도 경쟁사가 <strong style="color:#E5503A;">246,150회</strong> 더 검색되고 있습니다.
+  </div>
+  <div style="font-size:11px;color:#6b7280;margin-bottom:14px;">충남 보령시 고잠2길 4-27 · 숙박 / 펜션 / 호텔 블로그 리뷰 격차 기준 추산</div>
+  <div class="urgent-grid">
+    <div class="uc">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style="margin:0 auto 4px;display:block;"><circle cx="11" cy="11" r="8" stroke="#E5503A" stroke-width="2"/><path d="M21 21l-4.35-4.35" stroke="#E5503A" stroke-width="2" stroke-linecap="round"/></svg>
+      <div class="uc-val" style="color:#E5503A;">246,150회</div>
+      <div class="uc-label">월 검색 노출 손실</div>
+    </div>
+    <div class="uc">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style="margin:0 auto 4px;display:block;"><text x="12" y="17" text-anchor="middle" font-size="16" font-weight="900" fill="#E5503A" font-family="Malgun Gothic">₩</text></svg>
+      <div class="uc-val" style="color:#E5503A;">214만원</div>
+      <div class="uc-label">월 기회비용 손실</div>
+    </div>
+    <div class="uc">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style="margin:0 auto 4px;display:block;"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18" stroke="#E5503A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><polyline points="17 6 23 6 23 12" stroke="#E5503A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div class="uc-val" style="color:#E5503A;">3024만원</div>
+      <div class="uc-label">연간 누적 기회손실</div>
+    </div>
+    <div class="uc fire">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style="margin:0 auto 4px;display:block;"><circle cx="12" cy="12" r="10" stroke="white" stroke-width="2"/><polyline points="12 6 12 12 16 14" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div class="uc-val" style="color:white;font-size:13px;font-weight:900;">지금 시작 안 하면<br>회복 비용 2배↑</div>
+      <div class="uc-label" style="color:rgba(255,255,255,.8);">늦을수록 격차 심화</div>
+    </div>
+  </div>
+</div>
+
+<!-- 효과 섹션 -->
+<div class="effect-section">
+  <div class="effect-header">
+    <h3>✅ 블로그 체험단 20건 · 소진시까지 진행하면?</h3>
+    <p>지금 vs 3개월 후 — 숫자로 직접 확인하세요</p>
+  </div>
+  <div class="effect-grid">
+    <div class="effect-col now">
+      <div class="effect-col-title">😔 지금 이대로라면...</div>
+      <div>
+        <div class="effect-item-label">월 검색 노출 손실</div>
+        <div class="effect-item-val" style="color:#E5503A;">246,150회</div>
+      </div>
+      <div>
+        <div class="effect-item-label">월 매출 손실</div>
+        <div class="effect-item-val" style="color:#E5503A;">214만원</div>
+      </div>
+      <div>
+        <div class="effect-item-label">블로그 리뷰</div>
+        <div class="effect-item-val" style="color:#E5503A;">67개 (부족)</div>
+      </div>
+      <div>
+        <div class="effect-item-label">검색 노출 순위</div>
+        <div class="effect-item-val" style="color:#E5503A;">경쟁사에 밀림</div>
+      </div>
+      <div>
+        <div class="effect-item-label">연간 누적 손실</div>
+        <div class="effect-item-val" style="color:#E5503A;">3024만원</div>
+      </div>
+    </div>
+    <div class="effect-arrow">
+      <div style="font-size:28px;">→</div>
+      <div style="font-size:10px;color:#9ca3af;text-align:center;">3개월<br>후</div>
+    </div>
+    <div class="effect-col after">
+      <div class="effect-col-title">🎯 3개월 후 달라지는 것</div>
+      <div>
+        <div class="effect-item-label">추가 검색 노출</div>
+        <div class="effect-item-val" style="color:#2EAD7B;">+27,000회</div>
+      </div>
+      <div>
+        <div class="effect-item-label">월 매출 상승</div>
+        <div class="effect-item-val" style="color:#2EAD7B;">171~348만원</div>
+      </div>
+      <div>
+        <div class="effect-item-label">블로그 리뷰</div>
+        <div class="effect-item-val" style="color:#2EAD7B;">+20~30건</div>
+      </div>
+      <div>
+        <div class="effect-item-label">검색 노출 순위</div>
+        <div class="effect-item-val" style="color:#2EAD7B;">상위권 고정</div>
+      </div>
+      <div>
+        <div class="effect-item-label">투자 대비 ROI</div>
+        <div class="effect-item-val" style="color:#2EAD7B;">13~15배</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 💰 광고비 비교: 블로그 체험단 vs 네이버 유료광고 -->
+  <div class="ad-compare" style="background:white;border-radius:14px;border:2px solid #e5e7eb;padding:24px;margin-bottom:20px;">
+    <div style="text-align:center;margin-bottom:20px;">
+      <div style="font-size:17px;font-weight:900;color:#1a1a2e;">💰 같은 노출, 비용 차이는?</div>
+      <div style="font-size:12px;color:#6b7280;margin-top:4px;">블로그 20건 기준 월 9,000회 노출을 광고로 하면</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 40px 1fr;gap:0;align-items:stretch;">
+      <div style="background:#fff5f5;border:2px solid #fecaca;border-radius:14px;padding:20px;text-align:center;">
+        <div style="font-size:13px;font-weight:800;color:#E5503A;margin-bottom:16px;">❌ 네이버 유료광고</div>
+        <div style="margin-bottom:14px;">
+          <div style="font-size:11px;color:#6b7280;">월 광고비</div>
+          <div style="font-size:26px;font-weight:900;color:#E5503A;">450만원</div>
+        </div>
+        <div style="margin-bottom:14px;">
+          <div style="font-size:11px;color:#6b7280;">12개월 합계</div>
+          <div style="font-size:22px;font-weight:900;color:#E5503A;">5400만원</div>
+        </div>
+        <div style="padding:8px 10px;background:#fecaca;border-radius:8px;font-size:11px;font-weight:700;color:#991b1b;">
+          광고 끄면 노출 즉시 0
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center;">
+        <div style="background:#1a1a2e;color:white;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:11px;">VS</div>
+      </div>
+      <div style="background:#f0fdf4;border:2px solid #bbf7d0;border-radius:14px;padding:20px;text-align:center;">
+        <div style="font-size:13px;font-weight:800;color:#2EAD7B;margin-bottom:16px;">✅ 블로그 체험단</div>
+        <div style="margin-bottom:14px;">
+          <div style="font-size:11px;color:#6b7280;">1회 비용</div>
+          <div style="font-size:26px;font-weight:900;color:#2EAD7B;">20만원</div>
+        </div>
+        <div style="margin-bottom:14px;">
+          <div style="font-size:11px;color:#6b7280;">12개월 후에도</div>
+          <div style="font-size:22px;font-weight:900;color:#2EAD7B;">계속 노출</div>
+        </div>
+        <div style="padding:8px 10px;background:#bbf7d0;border-radius:8px;font-size:11px;font-weight:700;color:#065f46;">
+          영구 검색 자산으로 축적
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:16px;background:#1a1a2e;border-radius:10px;padding:16px;text-align:center;">
+      <div style="font-size:11px;color:#9ca3af;margin-bottom:4px;">연간 광고비 절감 효과</div>
+      <div style="font-size:30px;font-weight:900;color:#2EAD7B;">5380만원 절약</div>
+      <div style="font-size:11px;color:#9ca3af;margin-top:4px;">네이버 검색광고 CPC 500원 기준 · 블로그 1건당 월 450회 노출 추산</div>
+    </div>
+  </div>
+
+  <!-- 특가 박스 (리디자인) -->
+  <div class="special-pkg" style="background:linear-gradient(135deg,#1a1a2e 0%,#2d2d44 100%);border-radius:16px;padding:30px;margin-bottom:20px;position:relative;overflow:hidden;">
+    <div style="position:absolute;top:-40px;right:-40px;width:140px;height:140px;background:#E5503A;opacity:0.1;border-radius:50%;"></div>
+    <div style="position:absolute;bottom:-30px;left:-30px;width:100px;height:100px;background:#2EAD7B;opacity:0.08;border-radius:50%;"></div>
+    <div style="text-align:center;margin-bottom:18px;position:relative;">
+      <div style="display:inline-block;background:#E5503A;color:white;font-size:13px;font-weight:800;padding:7px 18px;border-radius:20px;animation:pulse 2s infinite;">🔥 선착순 3개 업체만 · 한정 특가</div>
+    </div>
+    <div style="display:flex;justify-content:center;align-items:center;gap:24px;flex-wrap:wrap;position:relative;">
+      <div style="text-align:center;">
+        <div style="font-size:13px;color:#9ca3af;margin-bottom:8px;">블로그 20건 · 소진시까지 · 순차 업로드</div>
+        <div style="font-size:15px;color:#6b7280;text-decoration:line-through;margin-bottom:6px;">기존가 38만원</div>
+        <div style="display:flex;align-items:center;justify-content:center;gap:14px;">
+          <div style="font-size:52px;font-weight:900;color:white;line-height:1;">20<span style="font-size:26px;">만원</span><span style="font-size:11px;font-weight:500;color:#9ca3af;margin-left:4px;vertical-align:middle;">(VAT별도)</span></div>
+          <div style="background:#E5503A;color:white;font-size:18px;font-weight:900;padding:10px 16px;border-radius:12px;line-height:1.2;">47%<br><span style="font-size:11px;font-weight:600;">할인</span></div>
+        </div>
+        <div style="font-size:12px;color:#fca5a5;margin-top:12px;font-weight:600;">⚡ 선착순 3개 업체 마감 시 특가 종료 · 지금 바로 문의하세요</div>
+      </div>
+      <div style="background:rgba(255,255,255,.06);border-radius:14px;padding:22px 30px;border:1px solid rgba(255,255,255,.12);text-align:center;">
+        <div style="font-size:11px;color:#9ca3af;margin-bottom:6px;">투자 대비 ROI</div>
+        <div style="font-size:42px;font-weight:900;color:#E5503A;line-height:1;">13~15배</div>
+        <div style="font-size:12px;color:#9ca3af;margin-top:8px;">20만원 투자 →<br><b style="color:white;">171~348만원</b> 회수</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 지금 시작해야 하는 이유 -->
+<div class="reason-section">
+  <div style="font-size:15px;font-weight:900;margin-bottom:14px;">ℹ️ 지금 시작해야 하는 이유</div>
+  <div class="reason-item">
+    <div class="reason-num">1</div>
+    <div>
+      <div class="reason-title">경쟁사와의 격차, 지금도 매일 벌어지고 있습니다</div>
+      <div class="reason-desc">라바풀빌라은 현재 블로그 <b style="color:#374151;">614개</b>로 검색 상위를 유지 중입니다.<br>오늘도 새 리뷰가 쌓이는 동안 달빛아래펜션과의 격차는 매일 벌어집니다. <b style="color:#E5503A;">6개월 후에는 격차가 지금의 2배</b>가 될 수 있습니다.</div>
+    </div>
+  </div>
+  <div class="reason-item">
+    <div class="reason-num">2</div>
+    <div>
+      <div class="reason-title">리뷰 1개가 만드는 검색 노출 효과</div>
+      <div class="reason-desc">블로그 리뷰 1건의 평균 노출은 <b style="color:#374151;">월 200~3,000회</b>입니다.<br>체험단 20건이면 <b style="color:#2EAD7B;">+27,000회</b> 추가 노출 — 유료 광고 없이 만들어지는 <b style="color:#2EAD7B;">검색 자산</b>입니다.</div>
+    </div>
+  </div>
+  <div class="reason-item">
+    <div class="reason-num">3</div>
+    <div>
+      <div class="reason-title">늦게 시작할수록 회복 비용이 2배 이상 올라갑니다</div>
+      <div class="reason-desc">지금은 특가 <b style="color:#E5503A;">20만원</b>으로 시작 가능합니다.<br>격차가 더 벌어지면 따라잡는 데 2배 이상의 비용과 기간이 필요합니다.<br>3~4개월 후 검색 상위권이 고정되면 <b style="color:#2EAD7B;">추가 비용 없이 노출이 유지</b>됩니다.</div>
+    </div>
+  </div>
+  <div class="reason-item">
+    <div class="reason-num">4</div>
+    <div>
+      <div class="reason-title" style="color:#E5503A;">지금 이 순간에도 월 214만원이 경쟁사로 넘어가고 있습니다</div>
+      <div class="reason-desc">경쟁사보다 <b style="color:#E5503A;">246,150회</b> 덜 검색되는 동안 잠재 손님들이 경쟁 매장을 먼저 찾습니다.<br>연간으로 환산하면 <b style="color:#E5503A;">3024만원</b>의 매출 기회를 잃는 것입니다.<br>지금 시작하면 <b style="color:#2EAD7B;">3~4개월 후 역전 가능</b>합니다.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ROI 배너 -->
+<div class="roi-bar">
+  <div>
+    <p style="font-size:11px;color:#9ca3af;margin-bottom:4px;">블로그 체험단 20건 · 소진시까지 · 투자 대비 13~15배 ROI 달성 기대</p>
+    <h3 style="font-size:16px;font-weight:900;color:white;">📈 지금 시작하면 3개월 후, 매출이 직접 증명합니다</h3>
+  </div>
+  <div class="roi-badges">
+    <div class="rbg"><div class="rb-val">171~348만원</div><div class="rb-label">월 예상 매출 상승</div></div>
+    <div class="rbr"><div class="rb-val">13~15배</div><div class="rb-label">투자 대비 ROI</div></div>
+  </div>
+</div>
+
+<!-- 제안 업체 -->
+<div class="agent-box">
+  <div>
+    <h3 style="font-size:17px;font-weight:900;margin-bottom:4px;">코코딩 · 홍순오</h3>
+    <p style="font-size:12px;color:#6b7280;margin-bottom:10px;">함께 고민하고 함께 풀어갑니다.</p>
+    <div>
+      <a href="tel:010-3282-4433" class="contact-tel">📞 010-3282-4433</a>
+      <a href="https://open.kakao.com/o/sog56FOh" target="_blank" class="contact-kk">💬 카카오톡 상담하기</a>
+    </div>
+  </div>
+  <div style="text-align:center;padding:14px 20px;background:#f9fafb;border-radius:10px;border:1.5px solid #e5e7eb;">
+    <div style="font-size:11px;color:#6b7280;margin-bottom:5px;">지금 바로 상담하세요</div>
+    <div style="font-size:22px;font-weight:900;color:#E5503A;">010-3282-4433</div>
+    <div style="font-size:11px;color:#6b7280;margin-top:2px;">홍순오 직통</div>
+  </div>
+</div>
+
+<!-- 푸터 -->
+<div class="footer-bar">
+  <span>※ 본 분석은 네이버 플레이스 공개 데이터 및 블로그 리뷰 격차 기반 추정입니다. 실제 효과는 시장 상황에 따라 달라질 수 있습니다.</span>
+  <span style="font-weight:700;color:#374151;">MARKETING DIAGNOSIS</span>
+</div>
+</div>
+</body>
+</html>
