@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>체험단 맞춤 제안서 생성기 v3</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+:root{--p:#2563EB;--pl:#EFF6FF;--pb:#BFDBFE;--ok:#16A34A;--er:#EF4444;--tx:#111827;--tx2:#6B7280;--tx3:#9CA3AF;--br:#E5E7EB;--g0:#F9FAFB;--g1:#F3F4F6;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--g0);color:var(--tx);min-height:100vh;}
+.hdr{background:#fff;border-bottom:1px solid var(--br);height:60px;padding:0 32px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:200;box-shadow:0 1px 4px rgba(0,0,0,.06);}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--p);letter-spacing:2px;}
+.hdiv{width:1px;height:20px;background:var(--br);}
+.hsub{font-size:13px;color:var(--tx2);}
+.pbw{background:#fff;border-bottom:1px solid var(--br);padding:16px 32px;}
+.ps{display:flex;align-items:center;max-width:640px;margin:0 auto;}
+.sd{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1;}
+.sdc{width:32px;height:32px;border-radius:50%;background:var(--g1);border:2px solid var(--br);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--tx3);transition:all .25s;}
+.sd.active .sdc{background:var(--p);border-color:var(--p);color:#fff;box-shadow:0 0 0 4px rgba(37,99,235,.14);}
+.sd.done .sdc{background:var(--ok);border-color:var(--ok);color:#fff;}
+.sdl{font-size:11px;color:var(--tx3);font-weight:500;white-space:nowrap;}
+.sd.active .sdl{color:var(--p);font-weight:700;}
+.sd.done .sdl{color:var(--ok);}
+.sl{flex:2;height:2px;background:var(--br);margin-bottom:20px;transition:background .3s;}
+.sl.done{background:var(--ok);}
+.main{max-width:720px;margin:0 auto;padding:36px 20px 100px;}
+.sc{display:none;animation:fu .28s ease;}
+.sc.active{display:block;}
+@keyframes fu{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+.sbg{display:inline-flex;background:var(--pl);color:var(--p);font-size:11px;font-weight:700;padding:3px 10px;border-radius:99px;margin-bottom:10px;}
+.stt{font-size:24px;font-weight:900;line-height:1.3;margin-bottom:6px;}
+.stt span{color:var(--p);}
+.sds{font-size:13px;color:var(--tx2);line-height:1.6;margin-bottom:20px;}
+.fg{background:#fff;border:1px solid var(--br);border-radius:14px;padding:20px 22px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,.05);}
+.fgt{font-size:11px;font-weight:700;color:var(--p);text-transform:uppercase;letter-spacing:1px;padding-bottom:12px;margin-bottom:18px;border-bottom:1px solid var(--br);}
+.fd{margin-bottom:16px;}
+.fd:last-child{margin-bottom:0;}
+label{display:block;font-size:13px;font-weight:700;color:var(--tx);margin-bottom:5px;}
+.fh{font-size:12px;color:var(--tx3);margin-bottom:7px;line-height:1.5;}
+input[type=text],input[type=tel],input[type=url],input[type=number],textarea{width:100%;background:var(--g0);border:1.5px solid var(--br);border-radius:9px;padding:10px 13px;font-size:14px;color:var(--tx);font-family:'Noto Sans KR',sans-serif;outline:none;transition:border-color .2s,box-shadow .2s;}
+input:focus,textarea:focus{border-color:var(--p);background:#fff;box-shadow:0 0 0 3px rgba(37,99,235,.1);}
+input::placeholder,textarea::placeholder{color:var(--tx3);}
+textarea{resize:vertical;min-height:80px;}
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;}
+.cop{border:1.5px solid var(--br);border-radius:10px;padding:11px 12px;cursor:pointer;display:flex;align-items:center;gap:9px;background:var(--g0);transition:all .18s;}
+.cop:hover{border-color:var(--pb);background:var(--pl);transform:translateY(-1px);}
+.cop.sel{border-color:var(--p);background:var(--pl);box-shadow:0 0 0 3px rgba(37,99,235,.1);}
+.cdot{width:20px;height:20px;border-radius:50%;flex-shrink:0;border:1.5px solid rgba(0,0,0,.1);}
+.cn{font-size:12px;font-weight:700;color:var(--tx);}
+.cd{font-size:10px;color:var(--tx2);margin-top:1px;}
+.cg2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.cbox{background:var(--g0);border:1.5px solid var(--br);border-radius:12px;padding:18px 14px;text-align:center;}
+.cbox label{font-size:12px;color:var(--tx2);margin-bottom:12px;display:block;font-weight:600;}
+.cctl{display:flex;align-items:center;justify-content:center;gap:12px;}
+.cbt{width:32px;height:32px;border-radius:50%;background:#fff;border:1.5px solid var(--br);color:var(--tx);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .18s;line-height:1;}
+.cbt:hover{background:var(--p);border-color:var(--p);color:#fff;}
+.cnum{font-size:30px;font-weight:900;color:var(--p);min-width:48px;text-align:center;}
+.cunit{font-size:11px;color:var(--tx3);margin-top:6px;}
+.cpv{background:var(--pl);border:1.5px solid var(--pb);border-radius:11px;padding:14px 18px;margin-top:14px;display:flex;justify-content:space-between;align-items:center;}
+.cpvl{font-size:13px;color:var(--p);font-weight:600;}
+.cpvs{font-size:11px;color:var(--tx2);margin-top:3px;}
+.cpvv{font-size:24px;font-weight:900;color:var(--p);}
+.brow{display:flex;gap:10px;margin-top:24px;}
+.bpv{padding:12px 20px;border-radius:9px;border:1.5px solid var(--br);background:#fff;color:var(--tx2);font-size:13px;font-weight:700;cursor:pointer;font-family:'Noto Sans KR',sans-serif;transition:all .18s;}
+.bpv:hover{border-color:var(--br);color:var(--tx);}
+.bnx{flex:1;padding:13px 24px;border-radius:9px;border:none;background:var(--p);color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:'Noto Sans KR',sans-serif;transition:all .18s;box-shadow:0 2px 8px rgba(37,99,235,.25);}
+.bnx:hover{background:#1D4ED8;transform:translateY(-1px);}
+.rc{background:#fff;border:1px solid var(--br);border-radius:18px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.08);}
+.rh{background:linear-gradient(135deg,#2563EB,#1D4ED8);padding:24px 28px;}
+.rh h2{font-size:20px;font-weight:900;color:#fff;margin-bottom:5px;}
+.rh p{font-size:13px;color:rgba(255,255,255,.75);}
+.rsm{display:grid;grid-template-columns:repeat(3,1fr);background:var(--g0);border-bottom:1px solid var(--br);}
+.rsi{text-align:center;padding:16px 12px;}
+.rsi:not(:last-child){border-right:1px solid var(--br);}
+.rsl{font-size:10px;color:var(--tx3);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;}
+.rsv{font-size:16px;font-weight:900;color:var(--p);}
+.caw{padding:20px 24px;}
+.cal{font-size:12px;font-weight:700;color:var(--tx2);margin-bottom:8px;}
+.carea{width:100%;background:var(--g0);border:1.5px solid var(--br);border-radius:10px;padding:16px;color:var(--tx);font-size:11px;font-family:'Courier New',monospace;line-height:1.6;resize:vertical;min-height:300px;outline:none;}
+.tip{background:#FFFBEB;border:1px solid #FDE68A;border-radius:10px;padding:14px 18px;margin:0 24px 16px;font-size:12px;color:#92400E;line-height:1.7;}
+.tip strong{color:#B45309;}
+.btr{padding:0 24px 24px;display:flex;gap:10px;}
+.bcp{flex:1;padding:14px;border-radius:10px;border:none;background:var(--p);color:#fff;font-size:14px;font-weight:900;cursor:pointer;font-family:'Noto Sans KR',sans-serif;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .18s;box-shadow:0 2px 8px rgba(37,99,235,.25);}
+.bcp:hover{background:#1D4ED8;transform:translateY(-1px);}
+.bcp.done{background:var(--ok);pointer-events:none;}
+.brs{padding:14px 20px;border-radius:10px;border:1.5px solid var(--br);background:#fff;color:var(--tx2);font-size:13px;font-weight:700;cursor:pointer;font-family:'Noto Sans KR',sans-serif;transition:all .18s;}
+.req{color:var(--er);margin-left:2px;}
+@media(max-width:580px){.main{padding:20px 14px 80px;}.stt{font-size:20px;}.cgrid{grid-template-columns:repeat(2,1fr);}.rsm{grid-template-columns:1fr;}.rsi:not(:last-child){border-right:none;border-bottom:1px solid var(--br);}.caw,.btr,.tip{padding-left:14px;padding-right:14px;}.btr{flex-direction:column;}.hdr{padding:0 14px;}.pbw{padding:12px 14px;}}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="logo">PROPOSAL MAKER</div>
+  <div class="hdiv"></div>
+  <div class="hsub">체험단 맞춤 제안서 즉시 생성기 v3</div>
+</div>
+
+<div class="pbw">
+  <div class="ps">
+    <div class="sd active" id="dot-1"><div class="sdc">1</div><div class="sdl">제공자</div></div>
+    <div class="sl" id="ln-1"></div>
+    <div class="sd" id="dot-2"><div class="sdc">2</div><div class="sdl">업체정보</div></div>
+    <div class="sl" id="ln-2"></div>
+    <div class="sd" id="dot-3"><div class="sdc">3</div><div class="sdl">건수/비용</div></div>
+    <div class="sl" id="ln-3"></div>
+    <div class="sd" id="dot-4"><div class="sdc">4</div><div class="sdl">색상</div></div>
+    <div class="sl" id="ln-4"></div>
+    <div class="sd" id="dot-5"><div class="sdc">✓</div><div class="sdl">완성</div></div>
+  </div>
+</div>
+
+<div class="main">
+
+  <div class="sc active" id="step-1">
+    <div class="sbg">STEP 1 / 4</div>
+    <div class="stt">제안서를 <span>보내는 분</span> 정보</div>
+    <div class="sds">네비게이션·푸터·CTA에 표시됩니다.</div>
+    <div class="fg">
+      <div class="fgt">📋 서비스 제공자</div>
+      <div class="fd"><label>상호명 또는 이름 <span class="req">*</span></label><input type="text" id="p-name" placeholder="예: 바이더헤드, 마케팅K"></div>
+      <div class="fd"><label>전화번호</label><input type="tel" id="p-tel" placeholder="010-0000-0000"></div>
+      <div class="fd"><label>카카오 오픈채팅 링크</label><input type="url" id="p-ko" placeholder="https://open.kakao.com/o/..."></div>
+      <div class="fd"><label>카카오 채널 링크</label><input type="url" id="p-kc" placeholder="https://pf.kakao.com/_..."></div>
+    </div>
+    <div class="brow"><button class="bnx" onclick="goStep(2)">다음 단계 →</button></div>
+  </div>
+
+  <div class="sc" id="step-2">
+    <div class="sbg">STEP 2 / 4</div>
+    <div class="stt">제안받을 <span>업체</span> 정보</div>
+    <div class="sds">상권 분석·이미지 자동 매칭에 사용됩니다.</div>
+    <div class="fg">
+      <div class="fgt">🏪 광고주 업체</div>
+      <div class="fd"><label>업체명 <span class="req">*</span></label><input type="text" id="b-name" placeholder="예: 수담한정식, 해담일식, 네일살롱봄"></div>
+      <div class="fd"><label>업종 <span class="req">*</span></label><div class="fh">예: 한정식, 일식당, 네일샵, 필라테스 스튜디오</div><input type="text" id="b-type" placeholder="업종을 구체적으로"></div>
+      <div class="fd"><label>주소 <span class="req">*</span></label><input type="text" id="b-addr" placeholder="예: 서울 강남구 봉은사로"></div>
+      <div class="fd"><label>대표 메뉴 / 서비스</label><div class="fh">쉼표로 구분 입력 → 자동 정제됩니다</div><textarea id="b-menu" placeholder="예: 한정식 코스 5만원, 특선 정식 8만원, 프리미엄 코스 12만원"></textarea></div>
+      <div class="fd"><label>주요 검색 키워드</label><div class="fh">쉼표로 구분 — 상권분석 카드에 뱃지로 표시됩니다</div><input type="text" id="b-kw" placeholder="예: 강남 한정식, 봉은사로 맛집, 강남구 점심 추천"></div>
+      <div class="fd"><label>평균 객단가</label><input type="text" id="b-price" placeholder="예: 80,000원 (모르면 빈칸)"></div>
+    </div>
+    <div class="brow"><button class="bpv" onclick="goStep(1)">← 이전</button><button class="bnx" onclick="goStep(3)">다음 단계 →</button></div>
+  </div>
+
+  <div class="sc" id="step-3">
+    <div class="sbg">STEP 3 / 4</div>
+    <div class="stt">진행 <span>건수</span>와 <span>비용</span></div>
+    <div class="sds">영수증 리뷰는 블로그 건수만큼 무료 서비스로 자동 반영됩니다.</div>
+    <div class="fg">
+      <div class="fgt">📊 체험단 건수</div>
+      <div class="cg2">
+        <div class="cbox"><label>블로그 체험단</label><div class="cctl"><button class="cbt" onclick="chg('blog',-5)">−</button><div class="cnum" id="bn">20</div><button class="cbt" onclick="chg('blog',5)">+</button></div><div class="cunit">건</div></div>
+        <div class="cbox"><label>인스타 체험단</label><div class="cctl"><button class="cbt" onclick="chg('insta',-5)">−</button><div class="cnum" id="in">10</div><button class="cbt" onclick="chg('insta',5)">+</button></div><div class="cunit">건</div></div>
+      </div>
+      <div style="margin-top:12px;padding:12px 14px;background:#F0FDF4;border:1px solid #BBF7D0;border-radius:10px;font-size:13px;color:#16A34A;font-weight:600;">
+        ★ 영수증(방문자) 리뷰 <span id="receipt-preview">+20건</span> 무료 서비스 포함
+      </div>
+    </div>
+    <div class="fg">
+      <div class="fgt">💰 단가 설정</div>
+      <div class="cg2">
+        <div class="fd"><label>블로그 1건 단가(원)</label><input type="number" id="bp" value="40000" oninput="updCost()"></div>
+        <div class="fd"><label>인스타 1건 단가(원)</label><input type="number" id="ip" value="30000" oninput="updCost()"></div>
+      </div>
+      <div class="cpv">
+        <div><div class="cpvl">예상 총 비용</div><div class="cpvs" id="cost-detail">블로그 20건×4만 + 인스타 10건×3만</div></div>
+        <div class="cpvv" id="total-cost">110만원</div>
+      </div>
+    </div>
+    <div class="brow"><button class="bpv" onclick="goStep(2)">← 이전</button><button class="bnx" onclick="goStep(4)">다음 단계 →</button></div>
+  </div>
+
+  <div class="sc" id="step-4">
+    <div class="sbg">STEP 4 / 4</div>
+    <div class="stt">포인트 <span>색상</span> 선택</div>
+    <div class="sds">제안서 전체 톤을 결정합니다.</div>
+    <div class="fg">
+      <div class="fgt">🎨 색상</div>
+      <div class="cgrid" id="color-grid"></div>
+      <div id="custom-wrap" style="display:none;margin-top:12px;">
+        <label>직접 입력 (HEX)</label>
+        <input type="text" id="custom-hex" placeholder="#EA580C">
+      </div>
+    </div>
+    <div class="brow"><button class="bpv" onclick="goStep(3)">← 이전</button><button class="bnx" onclick="generate()">🚀 제안서 HTML 생성!</button></div>
+  </div>
+
+  <div class="sc" id="step-result">
+    <div class="sbg">✅ 완성</div>
+    <div class="stt">제안서 HTML이 <span>완성</span>됐습니다!</div>
+    <div class="sds">아래 코드를 복사 → 메모장에 붙여넣기 → .html 저장 → 크롬에서 열기</div>
+    <div class="rc">
+      <div class="rh"><h2 id="r-title">제안서</h2><p id="r-sub">업체 정보</p></div>
+      <div class="rsm">
+        <div class="rsi"><div class="rsl">총 건수</div><div class="rsv" id="r-cnt">-</div></div>
+        <div class="rsi"><div class="rsl">총 비용</div><div class="rsv" id="r-cost">-</div></div>
+        <div class="rsi"><div class="rsl">영수증 리뷰</div><div class="rsv" id="r-receipt">-</div></div>
+      </div>
+      <div class="caw">
+        <div class="cal">📋 완성된 HTML 코드 — 복사 후 .html로 저장하세요</div>
+        <textarea class="carea" id="result-code" readonly></textarea>
+      </div>
+      <div class="tip"><strong>💡 사용 방법:</strong><br>1. 아래 <strong>[HTML 복사하기]</strong> 클릭<br>2. 메모장 열기 → 붙여넣기 (Ctrl+V)<br>3. 파일명: <strong>업체명.html</strong> 로 저장<br>4. 크롬으로 열면 완성된 제안서 확인 가능</div>
+      <div class="btr">
+        <button class="bcp" id="copy-btn" onclick="copyCode()">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          HTML 복사하기
+        </button>
+        <button class="bcp" id="dl-btn" onclick="downloadHTML()" style="background:#16A34A;">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          HTML 파일 저장
+        </button>
+        <button class="brs" onclick="resetAll()">처음부터</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const S = {blog:20, insta:10, color:'orange'};
+
+const COLORS = [
+  {id:'orange',hex:'#EA580C',dk:'#C2410C',lt:'rgba(234,88,12,0.1)',name:'오렌지',desc:'에너지/활동적'},
+  {id:'gold',hex:'#B8972E',dk:'#8B6E1A',lt:'rgba(184,151,46,0.1)',name:'골드',desc:'프리미엄/고급'},
+  {id:'navy',hex:'#1E3A5F',dk:'#162d4a',lt:'rgba(30,58,95,0.1)',name:'네이비',desc:'신뢰/전문적'},
+  {id:'green',hex:'#2D6A4F',dk:'#1e4d38',lt:'rgba(45,106,79,0.1)',name:'포레스트',desc:'자연/편안함'},
+  {id:'red',hex:'#DC2626',dk:'#b91c1c',lt:'rgba(220,38,38,0.1)',name:'레드',desc:'강렬/임팩트'},
+  {id:'purple',hex:'#7C3AED',dk:'#6d28d9',lt:'rgba(124,58,237,0.1)',name:'퍼플',desc:'감성/세련됨'},
+  {id:'pink',hex:'#DB2777',dk:'#be185d',lt:'rgba(219,39,119,0.1)',name:'핑크',desc:'트렌디/감각적'},
+  {id:'black',hex:'#1C1917',dk:'#0a0a0a',lt:'rgba(28,25,23,0.1)',name:'블랙',desc:'모던/미니멀'},
+  {id:'custom',hex:'#888888',dk:'#666',lt:'rgba(136,136,136,0.1)',name:'직접입력',desc:'HEX 코드'},
+];
+
+// 음식업종 판별
+const FOOD_TYPES = ['식당','맛집','한정식','일식','중식','양식','분식','카페','베이커리','치킨','피자','버거','라멘','우동','초밥','스시','고기','삼겹살','한우','해산물','횟집','국밥','설렁탕','떡볶이','김밥','파스타','이탈리안'];
+function isFood(type) { return FOOD_TYPES.some(k=>type.includes(k)); }
+
+// 한글 조사 자동 판별
+function hasBatchim(str) {
+  if(!str) return false;
+  const c = str.charCodeAt(str.length - 1);
+  if(c < 0xAC00 || c > 0xD7A3) return false;
+  return (c - 0xAC00) % 28 !== 0;
+}
+function getBatchimCode(str) {
+  if(!str) return 0;
+  const c = str.charCodeAt(str.length - 1);
+  if(c < 0xAC00 || c > 0xD7A3) return 0;
+  return (c - 0xAC00) % 28;
+}
+function josa(str, type) {
+  if(!str) return str;
+  const bat = hasBatchim(str);
+  const bc = getBatchimCode(str);
+  switch(type) {
+    case '을/를': return str + (bat ? '을' : '를');
+    case '이/가': return str + (bat ? '이' : '가');
+    case '과/와': return str + (bat ? '과' : '와');
+    case '은/는': return str + (bat ? '은' : '는');
+    case '으로/로': return str + (bat && bc !== 8 ? '으로' : '로');
+    default: return str;
+  }
+}
+
+// 업종별 유동인구 bullet
+function getTrafficBullets(type, addr) {
+  const city = addr.split(' ').slice(0,2).join(' ');
+  if(type.includes('한정식')||type.includes('한식')) return [`· ${city} 직장인 고급 점심 수요 밀집`,`· 한정식·코스 메뉴 검색량 꾸준`,`· 리뷰 많은 매장 중심으로 예약 이동`];
+  if(type.includes('일식')||type.includes('스시')||type.includes('초밥')||type.includes('오마카세')) return [`· ${city} 프리미엄 일식 수요 증가 추세`,`· 오마카세·코스 메뉴 SNS 바이럴 높음`,`· 리뷰·사진 품질로 예약 결정`];
+  if(type.includes('카페')||type.includes('커피')) return [`· ${city} 카페 검색량 지속 증가`,`· 감성 인테리어·음료 SNS 확산 빠름`,`· 리뷰·사진 많은 카페 재방문율 높음`];
+  if(type.includes('네일')) return [`· ${city} 네일샵 검색 경쟁 치열`,`· 인스타 시술 사진 바이럴 효과 큼`,`· 리뷰 후기로 신규 고객 유입 결정`];
+  if(type.includes('필라테스')||type.includes('요가')||type.includes('헬스')) return [`· ${city} 피트니스 수요 꾸준히 증가`,`· 강사·시설 후기로 등록 결정`,`· 블로그 체험 후기 신뢰도 높음`];
+  if(type.includes('헤어')||type.includes('미용')||type.includes('살롱')) return [`· ${city} 헤어샵 검색 경쟁 치열`,`· 스타일 사진 SNS 바이럴 빠름`,`· 리뷰 후기로 신규 고객 유입 결정`];
+  if(type.includes('병원')||type.includes('의원')||type.includes('치과')) return [`· ${city} 의료 검색량 지속 증가`,`· 후기·평점으로 병원 선택`,`· 블로그 정보성 콘텐츠 신뢰도 높음`];
+  return [`· ${city} 상권 유동인구 밀집`,`· 업종 검색량 꾸준히 증가`,`· 리뷰 많은 매장 중심으로 고객 이동`];
+}
+
+// Foodiesfeed + Unsplash 이미지 매핑 (검증된 URL)
+const IMG_MAP = [
+  // 음식 - Foodiesfeed 우선
+  {k:['한정식','한식','정식'],
+   hero:'https://images.unsplash.com/photo-1583623025817-d180a2221d0a?auto=format&fit=crop&q=80&w=1600',
+   food:'https://images.unsplash.com/photo-1583623025817-d180a2221d0a?auto=format&fit=crop&q=80&w=800'},
+  {k:['일식','스시','초밥','사시미','오마카세','대게','킹크랩'],
+   hero:'https://images.unsplash.com/photo-1617196034183-421b4040ed20?auto=format&fit=crop&q=80&w=1600',
+   food:'https://images.unsplash.com/photo-1617196034183-421b4040ed20?auto=format&fit=crop&q=80&w=800'},
+  {k:['라멘','우동','소바','국수'],
+   hero:'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&q=80&w=1600',
+   food:'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&q=80&w=800'},
+  {k:['한우','소고기','구이','바베큐','고기'],
+   hero:'https://images.unsplash.com/photo-1544025162-d76538b7a18a?auto=format&fit=crop&q=80&w=1600',
+   food:'https://images.unsplash.com/photo-1544025162-d76538b7a18a?auto=format&fit=crop&q=80&w=800'},
+  {k:['삼겹살','돼지','포크'],
+   hero:'https://images.unsplash.com/photo-1529193591184-b1d58069ecdd?auto=format&fit=crop&q=80&w=1600',
+   food:'https://images.unsplash.com/photo-1529193591184-b1d58069ecdd?auto=format&fit=crop&q=80&w=800'},
+  {k:['치킨','닭','프라이드'],
+   hero:'https://images.unsplash.com/photo-1626645738196-c2a7c87a8f58?auto=format&fit=crop&q=80&w=1600',
+   food:'https://images.unsplash.com/photo-1626645738196-c2a7c87a8f58?auto=format&fit=crop&q=80&w=800'},
+  {k:['해산물','횟집','해물','조개','랍스타','새우'],
+   hero:'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&q=80&w=1600',
+   food:'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&q=80&w=800'},
+  {k:['파스타','이탈리안','양식'],
+   hero:'https://images.unsplash.com/photo-1473093226795-af9932fe5856?auto=format&fit=crop&q=80&w=1600',
+   food:'https://images.unsplash.com/photo-1473093226795-af9932fe5856?auto=format&fit=crop&q=80&w=800'},
+  {k:['피자'],
+   hero:'https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&q=80&w=1600',
+   food:'https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&q=80&w=800'},
+  {k:['버거','햄버거'],
+   hero:'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&q=80&w=1600',
+   food:'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&q=80&w=800'},
+  {k:['브런치','토스트','샌드위치'],
+   hero:'https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?auto=format&fit=crop&q=80&w=1600',
+   food:'https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?auto=format&fit=crop&q=80&w=800'},
+  {k:['카페','커피','라떼','디저트'],
+   hero:'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&q=80&w=1600',
+   food:'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&q=80&w=800'},
+  {k:['베이커리','빵','케이크','제과'],
+   hero:'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&q=80&w=1600',
+   food:'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&q=80&w=800'},
+  {k:['떡볶이','분식','김밥','순대'],
+   hero:'https://images.unsplash.com/photo-1635363638580-c2809d049eee?auto=format&fit=crop&q=80&w=1600',
+   food:'https://images.unsplash.com/photo-1635363638580-c2809d049eee?auto=format&fit=crop&q=80&w=800'},
+  {k:['국밥','설렁탕','순대국','해장국'],
+   hero:'https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&q=80&w=1600',
+   food:'https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&q=80&w=800'},
+  // 뷰티/서비스 - Unsplash
+  {k:['네일','네일샵','네일아트'],
+   hero:'https://images.unsplash.com/photo-1604654894610-df63bc536371?auto=format&fit=crop&q=80&w=1600',
+   food:'https://images.unsplash.com/photo-1604654894610-df63bc536371?auto=format&fit=crop&q=80&w=800'},
+  {k:['헤어','미용','살롱','헤어샵'],
+   hero:'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&q=80&w=1600',
+   food:'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&q=80&w=800'},
+  {k:['필라테스','요가','스트레칭'],
+   hero:'https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&q=80&w=1600',
+   food:'https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&q=80&w=800'},
+  {k:['헬스','PT','피트니스','트레이닝'],
+   hero:'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=80&w=1600',
+   food:'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=80&w=800'},
+  {k:['피부','스킨','에스테틱','마사지','스파'],
+   hero:'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&q=80&w=1600',
+   food:'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&q=80&w=800'},
+  {k:['반려동물','펫','강아지','고양이'],
+   hero:'https://images.unsplash.com/photo-1587300003388-59208cc962cb?auto=format&fit=crop&q=80&w=1600',
+   food:'https://images.unsplash.com/photo-1587300003388-59208cc962cb?auto=format&fit=crop&q=80&w=800'},
+  {k:['숙박','호텔','펜션','게스트하우스'],
+   hero:'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=1600',
+   food:'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=800'},
+  {k:['병원','의원','치과','한의원'],
+   hero:'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80&w=1600',
+   food:'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80&w=800'},
+  {k:['학원','교육','과외','코딩'],
+   hero:'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&q=80&w=1600',
+   food:'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&q=80&w=800'},
+];
+
+// 기본 이미지 (매칭 없을 때)
+const DEFAULT_IMG = {
+  hero:'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&q=80&w=1600',
+  food:'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&q=80&w=800'
+};
+
+// 업종별 상권분석 카드 이미지 (3장 세트)
+const SCENE_MAP = [
+  {k:['한정식','한식','정식','국밥','설렁탕'],imgs:[
+    'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1552566626-52f8b828add9?auto=format&fit=crop&q=80&w=800']},
+  {k:['일식','스시','초밥','오마카세','라멘'],imgs:[
+    'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1611143669185-af224c5e3252?auto=format&fit=crop&q=80&w=800']},
+  {k:['카페','커피','디저트','베이커리','빵'],imgs:[
+    'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1445116572660-236099ec97a0?auto=format&fit=crop&q=80&w=800']},
+  {k:['네일','네일샵','네일아트'],imgs:[
+    'https://images.unsplash.com/photo-1604654894610-df63bc536371?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1457972729786-0411a3b2b626?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1519014816548-bf5fe059798b?auto=format&fit=crop&q=80&w=800']},
+  {k:['헤어','미용','살롱','헤어샵'],imgs:[
+    'https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1521590832167-7228f04de783?auto=format&fit=crop&q=80&w=800']},
+  {k:['필라테스','요가','헬스','피트니스','PT'],imgs:[
+    'https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&q=80&w=800']},
+  {k:['피부','에스테틱','마사지','스파'],imgs:[
+    'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1540555700478-4be289fbec6c?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1600334129128-685c5582fd35?auto=format&fit=crop&q=80&w=800']},
+  {k:['고기','삼겹살','한우','소고기','구이'],imgs:[
+    'https://images.unsplash.com/photo-1544025162-d76538b7a18a?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1529193591184-b1d58069ecdd?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&q=80&w=800']},
+  {k:['치킨','피자','버거','햄버거'],imgs:[
+    'https://images.unsplash.com/photo-1626645738196-c2a7c87a8f58?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&q=80&w=800']},
+  {k:['병원','의원','치과','한의원'],imgs:[
+    'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&q=80&w=800']},
+  {k:['숙박','호텔','펜션','게스트하우스'],imgs:[
+    'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=80&w=800']},
+];
+const DEFAULT_SCENE = [
+  'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&q=80&w=800',
+  'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&q=80&w=800',
+  'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=800'
+];
+function getSceneImgs(type) {
+  const txt = type.toLowerCase();
+  for(const s of SCENE_MAP) if(s.k.some(k=>txt.includes(k))) return s.imgs;
+  return DEFAULT_SCENE;
+}
+
+function getImg(type, menu) {
+  const txt = (type+' '+menu).toLowerCase();
+  for(const m of IMG_MAP) if(m.k.some(k=>txt.includes(k))) return {hero:m.hero, food:m.food};
+  return DEFAULT_IMG;
+}
+
+function initColors() {
+  const g = document.getElementById('color-grid');
+  COLORS.forEach(c=>{
+    const d=document.createElement('div');
+    d.className='cop'+(c.id==='orange'?' sel':'');
+    d.dataset.id=c.id;
+    d.innerHTML=`<div class="cdot" style="background:${c.hex}"></div><div><div class="cn">${c.name}</div><div class="cd">${c.desc}</div></div>`;
+    d.onclick=()=>selColor(c.id);
+    g.appendChild(d);
+  });
+}
+
+function selColor(id) {
+  S.color=id;
+  document.querySelectorAll('.cop').forEach(e=>e.classList.toggle('sel',e.dataset.id===id));
+  document.getElementById('custom-wrap').style.display=id==='custom'?'block':'none';
+}
+
+function chg(t,d) {
+  if(t==='blog') S.blog=Math.max(0,S.blog+d);
+  else S.insta=Math.max(0,S.insta+d);
+  document.getElementById('bn').textContent=S.blog;
+  document.getElementById('in').textContent=S.insta;
+  document.getElementById('receipt-preview').textContent='+'+S.blog+'건';
+  updCost();
+}
+
+function updCost() {
+  const bp=parseInt(document.getElementById('bp').value)||40000;
+  const ip=parseInt(document.getElementById('ip').value)||30000;
+  const t=Math.round((S.blog*bp+S.insta*ip)/10000);
+  document.getElementById('total-cost').textContent=t+'만원';
+  document.getElementById('cost-detail').textContent=`블로그 ${S.blog}건×${bp/10000}만 + 인스타 ${S.insta}건×${ip/10000}만`;
+}
+
+function goStep(n) {
+  if(n===2&&!document.getElementById('p-name').value.trim()){alert('상호명을 입력해주세요.');return;}
+  if(n===3&&(!document.getElementById('b-name').value.trim()||!document.getElementById('b-type').value.trim()||!document.getElementById('b-addr').value.trim())){alert('업체명, 업종, 주소는 필수입니다.');return;}
+  document.querySelectorAll('.sc').forEach(c=>c.classList.remove('active'));
+  const t=document.getElementById('step-'+n);
+  if(t)t.classList.add('active');
+  for(let i=1;i<=5;i++){const d=document.getElementById('dot-'+i);if(d){d.classList.remove('active','done');if(i<n)d.classList.add('done');else if(i===n)d.classList.add('active');}if(i<5){const l=document.getElementById('ln-'+i);if(l)l.classList.toggle('done',i<n);}}
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function generate() {
+  const pName=document.getElementById('p-name').value.trim();
+  const pTel=document.getElementById('p-tel').value.trim();
+  const pKO=document.getElementById('p-ko').value.trim();
+  const pKC=document.getElementById('p-kc').value.trim();
+  const bName=document.getElementById('b-name').value.trim();
+  const bType=document.getElementById('b-type').value.trim();
+  const bAddr=document.getElementById('b-addr').value.trim();
+  const bMenuR=document.getElementById('b-menu').value.trim();
+  const bKW=document.getElementById('b-kw').value.trim();
+  const bPrice=document.getElementById('b-price').value.trim();
+  const blogP=parseInt(document.getElementById('bp').value)||40000;
+  const instaP=parseInt(document.getElementById('ip').value)||30000;
+  const totalC=Math.round((S.blog*blogP+S.insta*instaP)/10000);
+
+  // 메뉴 정제
+  let menus=bMenuR.split(/[,\n\/·|]+/).map(m=>m.trim()).filter(m=>m.length>1&&m.length<50);
+  menus=[...new Set(menus)].slice(0,4);
+  const menuStr=menus.length>0?menus.join(', '):bType+' 대표 메뉴';
+  const menu1=menus[0]||menuStr;
+  // 메뉴 표시용 (짧게)
+  const menuShort=menus.length>0?menus[0]:bType;
+  const menuDisplay=menus.length>0?`<strong>'${menus.slice(0,2).join(', ')}'</strong>`:`<strong>'${bType}'</strong>`;
+
+  // 키워드 정제
+  let kwArr=bKW.split(/[,，]+/).map(k=>k.trim()).filter(k=>k.length>1);
+  if(kwArr.length===0){
+    const addrParts=bAddr.split(' ');
+    const gu=addrParts[1]||addrParts[0];
+    kwArr=[`${gu} ${bType}`, `${gu} 맛집`, `${bType} 추천`];
+  }
+
+  const addrShort=bAddr.split(' ').slice(0,3).join(' ');
+  const gu=bAddr.split(' ')[1]||bAddr.split(' ')[0];
+  const kakaoLink=pKO||pKC||(pTel?'tel:'+pTel.replace(/[- ]/g,''):'#');
+
+  let col=COLORS.find(c=>c.id===S.color)||COLORS[0];
+  if(S.color==='custom'){const hx=document.getElementById('custom-hex').value.trim()||'#EA580C';col={hex:hx,dk:hx,lt:'rgba(0,0,0,0.1)',name:hx};}
+
+  const imgData=getImg(bType,bMenuR);
+  const sceneImgs=getSceneImgs(bType);
+  const trafficBullets=getTrafficBullets(bType,bAddr);
+  // 업종명에 이미 식당/집/점/샵/원 포함 시 맛집 안 붙임
+  const hasSuffix=['식당','집','점','샵','원','관','청','소','실','방'].some(s=>bType.endsWith(s));
+  const foodSuffix=isFood(bType)&&!hasSuffix?' 맛집':'';
+  const originalC=Math.round(totalC*1.7);
+  const discountRate=Math.round((1-totalC/originalC)*100);
+
+  // 객단가 본전
+  let breakeven='';
+  if(bPrice&&bPrice!=='모름'){
+    const pn=parseInt(bPrice.replace(/[^0-9]/g,''));
+    if(pn>0){const ppl=Math.ceil((totalC*10000)/pn);breakeven=`<div style="background:#FFFBEB;border:1px solid #FDE68A;border-radius:12px;padding:14px 18px;margin-bottom:20px;font-size:15px;color:#92400E;">💡 <strong>객단가 ${bPrice} 기준</strong> — 단 <strong style="font-size:20px;color:#B45309;">${ppl}명</strong> 방문 시 투자비 전액 회수</div>`;}
+  }
+
+  const html=buildHTML({pName,pTel,kakaoLink,bName,bType,bAddr,addrShort,gu,menuStr,menu1,menuShort,menuDisplay,kwArr,bPrice,totalC,originalC,discountRate,blogP,instaP,imgData,sceneImgs,col,trafficBullets,foodSuffix,breakeven});
+
+  document.getElementById('r-title').textContent=bName+' 맞춤 제안서';
+  document.getElementById('r-sub').textContent=bAddr+' · '+bType;
+  document.getElementById('r-cnt').textContent=(S.blog+S.insta)+'건';
+  document.getElementById('r-cost').textContent=totalC+'만원';
+  document.getElementById('r-receipt').textContent='+'+S.blog+'건 무료';
+  document.getElementById('result-code').value=html;
+
+  document.querySelectorAll('.sc').forEach(c=>c.classList.remove('active'));
+  document.getElementById('step-result').classList.add('active');
+  for(let i=1;i<=5;i++){const d=document.getElementById('dot-'+i);if(d){d.classList.remove('active');d.classList.add('done');}}
+  for(let i=1;i<=4;i++){const l=document.getElementById('ln-'+i);if(l)l.classList.add('done');}
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function buildHTML(v) {
+  const blog=S.blog, insta=S.insta;
+  const pc=v.col.hex, pdk=v.col.dk, plt=v.col.lt;
+  const minE=(blog*800+insta*1500).toLocaleString();
+  const maxE=(blog*6000+insta*1500).toLocaleString();
+  const defE=(blog*2000+insta*1500).toLocaleString();
+  // 광고비 절감 계산: 1건당 800회 × 350원
+  const totalViews=blog*800+insta*800;
+  const adCost=Math.round(totalViews*350/10000);
+  const saving=adCost-v.totalC;
+  // 업종별 현재 리뷰 추정 (평균)
+  const btype=v.bType.toLowerCase();
+  let curBlog=8, curVisit=12, curExpose=3000;
+  if(btype.includes('한정식')||btype.includes('한식')){curBlog=12;curVisit=20;curExpose=4000;}
+  else if(btype.includes('일식')||btype.includes('스시')||btype.includes('초밥')){curBlog=10;curVisit=15;curExpose=3500;}
+  else if(btype.includes('카페')||btype.includes('커피')){curBlog=20;curVisit=35;curExpose=8000;}
+  else if(btype.includes('치킨')||btype.includes('피자')||btype.includes('버거')){curBlog=15;curVisit=40;curExpose=6000;}
+  else if(btype.includes('네일')||btype.includes('헤어')){curBlog=8;curVisit=10;curExpose=2000;}
+  else if(btype.includes('필라테스')||btype.includes('헬스')||btype.includes('요가')){curBlog=5;curVisit=8;curExpose=1500;}
+  const afterBlog=curBlog+blog;
+  const afterVisit=curVisit+blog;
+  const curExposeStr=(curExpose).toLocaleString();
+  // 현재/목표 바 비율 (현재는 항상 작게, 목표는 크게)
+  const curBarPct=Math.min(15, Math.round(curBlog/(curBlog+blog)*30));
+  const afterBarPct=85;
+
+return `<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>${v.bName} | 체험단 맞춤 제안서</title>
+<script src="https://cdn.tailwindcss.com"><\/script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<style>
+body{font-family:'Noto Sans KR',sans-serif;scroll-behavior:smooth;word-break:keep-all;}
+.hover-lift{transition:all .35s ease;}
+.hover-lift:hover{transform:translateY(-5px);box-shadow:0 12px 32px rgba(0,0,0,0.12);}
+.img-zoom{overflow:hidden;}
+.img-zoom img{transition:transform .6s ease;}
+.img-zoom:hover img{transform:scale(1.05);}
+.kakao-btn{background:#FEE500;color:#191919;transition:all .3s cubic-bezier(0.175,0.885,0.32,1.275);}
+.kakao-btn:hover{transform:scale(1.05) translateY(-3px);box-shadow:0 20px 25px -5px rgba(0,0,0,0.15);}
+</style>
+</head>
+<body class="bg-stone-50 text-stone-800 antialiased">
+
+<!-- 플로팅 카카오 -->
+<a href="${v.kakaoLink}" target="_blank" class="kakao-btn" style="position:fixed;bottom:2rem;right:2rem;z-index:9999;border-radius:50px;padding:14px 22px;display:flex;align-items:center;gap:10px;font-weight:700;font-size:15px;box-shadow:0 4px 24px rgba(0,0,0,0.25);text-decoration:none;">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="#191919"><path d="M12 3c-4.97 0-9 3.185-9 7.115 0 2.558 1.707 4.8 4.27 6.054l-.77 2.82c-.083.306.1.6.4.524l3.32-.835c.57.043 1.155.066 1.78.066 4.97 0 9-3.185 9-7.115S16.97 3 12 3z"/></svg>
+  카카오 상담
+</a>
+
+<!-- 네비 -->
+<nav class="bg-white/90 backdrop-blur-md border-b border-stone-200 sticky top-0 z-50">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between h-16 items-center">
+    <div class="flex items-center gap-2">
+      <span class="text-xl font-black tracking-tighter" style="color:${pc};">${v.pName}</span>
+      <span class="text-sm text-stone-500 hidden sm:block">| 체험단 맞춤 제안서</span>
+    </div>
+    <div class="flex gap-4 text-sm font-bold text-stone-600">
+      <a href="#market" class="hover:opacity-70 transition hidden sm:block">상권분석</a>
+      <a href="#why" class="hover:opacity-70 transition hidden sm:block">왜해야하나</a>
+      <a href="#effect" class="hover:opacity-70 transition hidden sm:block">변화예측</a>
+      <a href="#contact" class="px-4 py-2 rounded-lg text-white transition hover:opacity-90" style="background:${pc};">문의하기</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="relative bg-stone-950 overflow-hidden" style="min-height:95vh;display:flex;align-items:center;">
+  <div class="absolute inset-0" style="opacity:0.55;">
+    <img src="${v.imgData.hero}" class="w-full h-full object-cover" onerror="this.style.display='none'">
+  </div>
+  <div class="absolute inset-0" style="background:linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.6) 100%);"></div>
+  <div class="relative max-w-4xl mx-auto px-6 py-20">
+    <div class="inline-block px-4 py-1 mb-6 text-xs font-bold tracking-wider rounded-full text-white" style="border:1px solid rgba(255,255,255,0.4);background:rgba(255,255,255,0.1);">
+      ${v.addrShort} · 맞춤 체험단 제안서
+    </div>
+    <h1 class="text-4xl sm:text-6xl font-black text-white mb-6 leading-tight drop-shadow-2xl">
+      <span style="color:#fff;">${josa(v.bName,'을/를')}</span><br>
+      <span style="color:${pc};">${v.gu}</span><span style="color:#fff;">에서 검색 1페이지</span><br>
+      <span style="color:#60A5FA;">${v.bType}${v.foodSuffix}</span><span style="color:#fff;">${hasBatchim((v.bType+v.foodSuffix))&&getBatchimCode((v.bType+v.foodSuffix))!==8?'으로':'로'} 만들어 드립니다</span>
+    </h1>
+    <p class="text-xl text-white/90 max-w-2xl mb-10 leading-relaxed drop-shadow-lg">
+      검색하면 가장 먼저 나오는 매장 —<br>
+      <strong style="color:${pc};">예약은 저절로 채워집니다</strong>
+    </p>
+    <div class="flex flex-wrap items-center gap-4">
+      <a href="${v.kakaoLink}" target="_blank" class="kakao-btn inline-flex items-center px-8 py-4 rounded-2xl font-black text-lg shadow-2xl">
+        <svg class="w-6 h-6 mr-3" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3c-4.97 0-9 3.185-9 7.115 0 2.558 1.707 4.8 4.27 6.054l-.77 2.82c-.083.306.1.6.4.524l3.32-.835c.57.043 1.155.066 1.78.066 4.97 0 9-3.185 9-7.115S16.97 3 12 3z"/></svg>
+        카카오톡으로 상담 시작하기
+      </a>
+    </div>
+  </div>
+</header>
+
+<!-- 긴급 배너 -->
+<div style="background:linear-gradient(90deg,${pc},${pdk});padding:18px 24px;">
+  <div class="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-4">
+    <div class="text-white font-black text-base">🚨 지금 이 순간에도 고객은 검색하고 있습니다 — ${josa(v.bName,'은/는')} 보이고 있나요?</div>
+    <a href="${v.kakaoLink}" target="_blank" class="kakao-btn px-6 py-3 rounded-xl font-black text-sm flex-shrink-0">지금 바로 확인하기 →</a>
+  </div>
+</div>
+
+<!-- 신뢰 지표 섹션 -->
+<section style="background:#111827;padding:56px 24px;">
+  <div class="max-w-6xl mx-auto text-center">
+    <div style="font-size:13px;font-weight:700;letter-spacing:3px;color:${pc};text-transform:uppercase;margin-bottom:12px;">PROVEN RESULTS</div>
+    <h2 style="font-size:32px;font-weight:900;color:#fff;margin-bottom:48px;">${josa(v.pName,'과/와')} 함께라면<br><span style="color:${pc};">${josa(v.bName,'이/가')} 이렇게 변합니다</span></h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:32px;max-width:900px;margin:0 auto;">
+      <div>
+        <div style="font-size:48px;font-weight:900;color:${pc};margin-bottom:8px;">${blog}건+</div>
+        <div style="font-size:14px;color:#9CA3AF;">블로그 리뷰 콘텐츠 확보</div>
+      </div>
+      <div>
+        <div style="font-size:48px;font-weight:900;color:${pc};margin-bottom:8px;">${insta}건+</div>
+        <div style="font-size:14px;color:#9CA3AF;">인스타그램 콘텐츠 확보</div>
+      </div>
+      <div>
+        <div style="font-size:48px;font-weight:900;color:${pc};margin-bottom:8px;">${Math.round((blog*2000+insta*1500)/10000)}만+</div>
+        <div style="font-size:14px;color:#9CA3AF;">예상 총 노출 (회)</div>
+      </div>
+      <div>
+        <div style="font-size:48px;font-weight:900;color:${pc};margin-bottom:8px;">+${blog}건</div>
+        <div style="font-size:14px;color:#9CA3AF;">방문자 리뷰 무료 서비스</div>
+      </div>
+      <div>
+        <div style="font-size:48px;font-weight:900;color:${pc};margin-bottom:8px;">TOP</div>
+        <div style="font-size:14px;color:#9CA3AF;">검색 상위권 노출 목표</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 상권 분석 -->
+<section id="market" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+  <div class="mb-12">
+    <div class="text-xs font-black tracking-widest uppercase mb-3" style="color:${pc};">MARKET ANALYSIS</div>
+    <h2 class="text-3xl font-black text-stone-900 mb-4">📍 ${v.bName} 상권 분석</h2>
+    <p class="text-stone-600 max-w-2xl text-base leading-relaxed">
+      ${v.addrShort} 상권의 특성과 고객 검색 패턴을 분석했습니다.<br>
+      ${v.menuDisplay}처럼 메뉴 포인트가 분명한 매장은 체험단 콘텐츠 효율이 특히 높습니다.
+    </p>
+  </div>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <div class="bg-white rounded-2xl border border-stone-100 overflow-hidden hover-lift">
+      <div class="img-zoom h-52 rounded-t-2xl"><img src="${v.sceneImgs[0]}" class="w-full h-full object-cover" onerror="this.style.display='none'"></div>
+      <div class="p-6">
+        <h3 class="text-lg font-black mb-4">👥 유동인구 특성</h3>
+        <ul class="space-y-3 text-base text-stone-600 leading-relaxed">
+          ${v.trafficBullets.map(b=>`<li>${b}</li>`).join('')}
+        </ul>
+      </div>
+    </div>
+    <div class="bg-white rounded-2xl border border-stone-100 overflow-hidden hover-lift">
+      <div class="img-zoom h-52 rounded-t-2xl"><img src="${v.sceneImgs[1]}" class="w-full h-full object-cover" onerror="this.style.display='none'"></div>
+      <div class="p-6">
+        <h3 class="text-lg font-black mb-4">🔍 고객이 찾는 키워드</h3>
+        <div class="flex flex-wrap gap-2 mb-4">
+          ${v.kwArr.map((k,i)=>`<span class="px-3 py-2 rounded-full text-sm font-bold ${i===0?'text-white':'border'}" style="${i===0?'background:'+pc+';':i===1?'color:'+pc+';border-color:'+pc+';':'background:#F3F4F6;color:#374151;'}">${k}${i===0?' 🔥':''}</span>`).join('')}
+        </div>
+        <div style="display:inline-flex;align-items:center;gap:6px;background:#FEF3C7;border:1px solid #FDE68A;border-radius:8px;padding:6px 12px;margin-bottom:10px;">
+          <span style="font-size:14px;">📈</span>
+          <span style="font-size:12px;font-weight:700;color:#92400E;">월 검색량 높음 — 상위 노출 시 유입 효과 큼</span>
+        </div>
+        <p class="text-sm text-stone-500 leading-relaxed">메뉴명이 포함된 키워드일수록 구매 의도가 높습니다.</p>
+      </div>
+    </div>
+    <div class="bg-white rounded-2xl border border-stone-100 overflow-hidden hover-lift">
+      <div class="img-zoom h-52 rounded-t-2xl"><img src="${v.sceneImgs[2]}" class="w-full h-full object-cover" onerror="this.style.display='none'"></div>
+      <div class="p-6">
+        <h3 class="text-lg font-black mb-4">🎯 지금이 기회인 이유</h3>
+        <ul class="space-y-3 text-base text-stone-600 leading-relaxed">
+          <li>· <strong>'${v.menuShort}'</strong> 콘텐츠 효율 높음</li>
+          <li>· 선점할수록 경쟁 격차 벌어짐</li>
+          <li>· 리뷰 자산은 영구 누적</li>
+        </ul>
+        <div style="margin-top:16px;background:#FEF2F2;border:1px solid #FECACA;border-radius:10px;padding:12px 16px;">
+          <div style="font-size:13px;font-weight:900;color:#DC2626;margin-bottom:4px;">🏆 검색 상위 5개 매장이</div>
+          <div style="font-size:20px;font-weight:900;color:#DC2626;">전체 클릭의 73%</div>
+          <div style="font-size:11px;color:#991B1B;margin-top:4px;">를 가져갑니다. 나머지는 나눠 갖습니다.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY NOW -->
+<section id="why" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+  <div class="mb-10">
+    <div class="text-xs font-black tracking-widest uppercase mb-3" style="color:${pc};">WHY NOW</div>
+    <h2 class="text-3xl font-black text-stone-900">🚨 지금 하지 않으면 생기는 일</h2>
+    <p class="text-stone-600 mt-3 text-base leading-relaxed">좋은 메뉴를 운영하고 있어도, 고객이 보기 전까지는 경쟁력이 아닙니다.</p>
+  </div>
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <div class="bg-white rounded-2xl border border-stone-200 overflow-hidden hover-lift">
+      <div class="img-zoom h-56 rounded-t-2xl"><img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=800" class="w-full h-full object-cover" onerror="this.style.display='none'"></div>
+      <div class="p-7">
+        <h3 class="text-xl font-black mb-5 text-stone-700">😔 지금 이대로라면...</h3>
+        <ul class="space-y-4">
+          <li class="flex items-start gap-3"><span class="text-red-500 font-black text-lg mt-0.5">✗</span><span class="text-base text-stone-600 leading-relaxed">'${v.kwArr[0]}' 검색해도 ${v.bName} 상위 안 나옴</span></li>
+          <li class="flex items-start gap-3"><span class="text-red-500 font-black text-lg mt-0.5">✗</span><span class="text-base text-stone-600 leading-relaxed">리뷰 없어서 신규 고객 신뢰도 부족</span></li>
+          <li class="flex items-start gap-3"><span class="text-red-500 font-black text-lg mt-0.5">✗</span><span class="text-base text-stone-600 leading-relaxed">경쟁 매장이 리뷰 쌓으며 상위 선점 중</span></li>
+          <li class="flex items-start gap-3"><span class="text-red-500 font-black text-lg mt-0.5">✗</span><span class="text-base text-stone-600 leading-relaxed">검색 고객은 리뷰 많은 곳으로 이탈</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="rounded-2xl overflow-hidden hover-lift" style="border:2px solid ${pc};">
+      <div class="img-zoom h-56 rounded-t-2xl"><img src="${v.imgData.food}" class="w-full h-full object-cover" onerror="this.style.display='none'"></div>
+      <div class="p-7" style="background:${plt};">
+        <h3 class="text-xl font-black mb-5" style="color:${pc};">✨ 체험단 진행 후 달라지는 것</h3>
+        <ul class="space-y-4">
+          <li class="flex items-start gap-3"><span class="font-black text-lg mt-0.5" style="color:${pc};">✓</span><span class="text-base text-stone-700 leading-relaxed">'${v.kwArr[0]}' 검색 상위 노출 달성</span></li>
+          <li class="flex items-start gap-3"><span class="font-black text-lg mt-0.5" style="color:${pc};">✓</span><span class="text-base text-stone-700 leading-relaxed">블로그+방문자 리뷰 동시 증가로 신뢰도 UP</span></li>
+          <li class="flex items-start gap-3"><span class="font-black text-lg mt-0.5" style="color:${pc};">✓</span><span class="text-base text-stone-700 leading-relaxed">인스타 콘텐츠 확산으로 자연 바이럴 시작</span></li>
+          <li class="flex items-start gap-3"><span class="font-black text-lg mt-0.5" style="color:${pc};">✓</span><span class="text-base font-bold leading-relaxed" style="color:${pc};">★ 영수증(방문자) 리뷰 +${blog}건 무료 서비스 포함</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 프로세스 -->
+<section id="process" class="bg-stone-100 py-20">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="mb-10">
+      <div class="text-xs font-black tracking-widest uppercase mb-3" style="color:${pc};">PROCESS</div>
+      <h2 class="text-3xl font-black text-stone-900">📋 진행은 이렇게 됩니다</h2>
+      <p class="text-stone-600 mt-2 text-base">복잡한 거 없습니다. 저희가 다 해드립니다.</p>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      ${[['📞','상담 및 일정 조율',['운영 상황 확인','목표 메뉴 선정','진행 방향 확정']],
+         ['🔍','블로거·인스타 섭외',['매장 분위기 맞는 블로거','지역 타겟 인플루언서','방문 일정 조율']],
+         ['📸','방문 체험 및 콘텐츠',['사진·영상 촬영','블로그·인스타 포스팅','검색 키워드 최적화']],
+         ['📊','업로드 및 결과 보고',['업로드 현황 공유','상위노출 여부 확인','영수증 리뷰 동시 진행']]
+        ].map((s,i)=>`
+      <div class="bg-white rounded-2xl p-6 cursor-default transition-all duration-300 hover:-translate-y-1" style="border:2px solid transparent;" onmouseover="this.style.borderColor='${pc}'" onmouseout="this.style.borderColor='transparent'">
+        <div class="w-14 h-14 rounded-full text-white font-black flex items-center justify-center text-2xl mb-5" style="background:${pc};">${i+1}</div>
+        <div class="text-lg font-black mb-4">${s[0]} ${s[1]}</div>
+        <ul class="space-y-2">${s[2].map(t=>`<li class="text-base text-stone-500 leading-relaxed">· ${t}</li>`).join('')}</ul>
+      </div>`).join('')}
+    </div>
+  </div>
+</section>
+
+<!-- 기대효과 -->
+<section id="effect" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+  <div class="bg-stone-900 text-white rounded-3xl p-10 md:p-16 relative overflow-hidden">
+    <div class="absolute inset-0 opacity-10"><img src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&q=80&w=1200" class="w-full h-full object-cover" onerror="this.style.display='none'"></div>
+    <div class="relative z-10">
+      <div class="text-xs font-black tracking-widest mb-3" style="color:${pc};">EXPECTED IMPACT</div>
+      <h2 class="text-3xl font-black mb-3">💰 함께하면 이렇게 달라집니다</h2>
+      <p class="text-stone-400 mb-12 text-base leading-relaxed">단순히 후기 몇 개가 아닙니다. 검색·SNS에서 반복 노출되는 구조를 만듭니다.</p>
+
+      <!-- 3열 카드 -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
+        <!-- 카드1 실행플랜 -->
+        <div class="p-7 rounded-2xl" style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);">
+          <div class="text-xs font-black tracking-widest text-stone-400 uppercase mb-3">실행 플랜</div>
+          <div class="text-2xl font-black mb-5">패키지 구성</div>
+          <div class="space-y-3 mb-5">
+            <div class="flex justify-between text-base"><span class="text-stone-400">블로그 체험단</span><span class="font-black text-white">${blog}건</span></div>
+            <div class="flex justify-between text-base"><span class="text-stone-400">인스타 체험단</span><span class="font-black text-white">${insta}건</span></div>
+            <div class="flex justify-between text-base"><span class="text-stone-400">영수증 리뷰</span><span class="font-bold" style="color:${pc};">+${blog}건 무료</span></div>
+          </div>
+          <div style="border-top:1px solid rgba(255,255,255,0.15);padding-top:14px;">
+            <div class="text-xs text-stone-400 mb-1">총 비용</div>
+            <div class="font-black" style="font-size:40px;color:${pc};">${v.totalC}만원</div>
+          </div>
+        </div>
+
+        <!-- 카드2 광고비 절감 비교 -->
+        <div class="bg-white text-stone-900 p-7 rounded-2xl">
+          <div class="text-xs font-black tracking-widest text-stone-500 uppercase mb-3">광고비 절감 효과</div>
+          <div class="text-2xl font-black mb-5">유료광고 vs 체험단</div>
+          <!-- 비교 바 -->
+          <div class="mb-4">
+            <div class="flex justify-between items-center mb-1">
+              <span class="text-sm font-bold text-red-500">유료 광고 집행 시</span>
+              <span class="text-base font-black text-red-500">${adCost}만원</span>
+            </div>
+            <div style="background:#FEE2E2;border-radius:9999px;height:14px;width:100%;overflow:hidden;">
+              <div style="background:#EF4444;height:14px;border-radius:9999px;width:100%;"></div>
+            </div>
+          </div>
+          <div class="mb-5">
+            <div class="flex justify-between items-center mb-1">
+              <span class="text-sm font-bold" style="color:${pc};">체험단으로 해결</span>
+              <span class="text-base font-black" style="color:${pc};">${v.totalC}만원</span>
+            </div>
+            <div style="background:#E0F2FE;border-radius:9999px;height:14px;width:100%;overflow:hidden;">
+              <div style="background:${pc};height:14px;border-radius:9999px;width:${Math.round(v.totalC/adCost*100)}%;"></div>
+            </div>
+          </div>
+          <div class="rounded-xl p-4 text-center" style="background:${plt};border:1px solid ${pc};">
+            <div class="text-sm text-stone-600 mb-1">절감 효과</div>
+            <div class="text-3xl font-black" style="color:${pc};">${saving > 0 ? saving+'만원 절감' : adCost+'만원 효과'}</div>
+            <div class="text-xs text-stone-500 mt-1">리뷰 1건당 800회 × 350원 기준</div>
+          </div>
+        </div>
+
+        <!-- 카드3 검색 점유율 변화 -->
+        <div class="p-7 rounded-2xl" style="background:linear-gradient(135deg,${pc},${pdk});">
+          <div class="text-xs font-black tracking-widest text-white/80 uppercase mb-3">SEARCH DOMINANCE</div>
+          <div class="text-2xl font-black text-white mb-5">검색 점유율 변화</div>
+
+          <!-- 현재 점유율 바 -->
+          <div class="mb-4">
+            <div class="flex justify-between items-center mb-2">
+              <span class="text-sm font-bold text-white/70">현재</span>
+              <span class="text-lg font-black text-white">5%</span>
+            </div>
+            <div style="background:rgba(255,255,255,0.15);border-radius:9999px;height:16px;overflow:hidden;">
+              <div class="search-bar-now" style="background:rgba(255,255,255,0.5);height:16px;border-radius:9999px;width:0%;transition:width 1.5s ease-out;"></div>
+            </div>
+          </div>
+
+          <!-- 3개월 후 점유율 바 -->
+          <div class="mb-5">
+            <div class="flex justify-between items-center mb-2">
+              <span class="text-sm font-bold text-white">3개월 후</span>
+              <span class="text-lg font-black text-white" style="text-shadow:0 0 12px rgba(255,255,255,0.5);">75%</span>
+            </div>
+            <div style="background:rgba(255,255,255,0.15);border-radius:9999px;height:16px;overflow:hidden;">
+              <div class="search-bar-after" style="background:#fff;height:16px;border-radius:9999px;width:0%;transition:width 2s cubic-bezier(0.22,1,0.36,1);"></div>
+            </div>
+          </div>
+
+          <div style="background:rgba(255,255,255,0.15);border-radius:12px;padding:14px;">
+            <div class="text-white text-base font-bold mb-1">🏆 검색 상위 5개 안에 들어갑니다</div>
+            <div class="text-white/90 text-sm leading-relaxed">상위 5개 매장이 전체 클릭의 <strong>73%</strong>를 가져갑니다.<br>지금 시작해야 그 자리를 차지할 수 있습니다.</div>
+          </div>
+        </div>
+<script>
+(function(){
+  const obs=new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        const now=e.target.querySelector('.search-bar-now');
+        const after=e.target.querySelector('.search-bar-after');
+        if(now)setTimeout(()=>{now.style.width='5%';},200);
+        if(after)setTimeout(()=>{after.style.width='75%';},600);
+        obs.unobserve(e.target);
+      }
+    });
+  },{threshold:0.3});
+  document.addEventListener('DOMContentLoaded',()=>{
+    document.querySelectorAll('.search-bar-now,.search-bar-after').forEach(el=>{
+      const card=el.closest('[class*="rounded-2xl"]');
+      if(card)obs.observe(card);
+    });
+  });
+})();
+<\/script>
+      </div>
+
+      <!-- 비교표 -->
+      <div class="bg-white rounded-2xl p-8 text-stone-900">
+        <div class="font-black text-xl mb-5">✅ 블로그 ${blog}건 패키지 · 3개월 예상 효과</div>
+        ${v.breakeven}
+        <div style="background:#F9FAFB;border-radius:12px;padding:18px 22px;display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;border:1px solid #E5E7EB;">
+          <div><div style="font-size:14px;color:#6B7280;font-weight:600;">예상 투자 비용</div><div style="font-size:12px;color:#9CA3AF;margin-top:2px;">소진 시까지 모집 · 순차 업로드</div></div>
+          <div style="font-size:30px;font-weight:900;color:${pc};">${v.totalC}만원</div>
+        </div>
+        <table style="width:100%;border-collapse:collapse;font-size:15px;">
+          <thead>
+            <tr style="background:#1C1917;color:#fff;">
+              <th style="padding:14px 18px;text-align:left;border-radius:10px 0 0 0;">구분</th>
+              <th style="padding:14px 18px;text-align:center;">🔴 현재 상태</th>
+              <th style="padding:14px 18px;text-align:center;border-radius:0 10px 0 0;">🟢 3개월 후 목표</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${[
+              ['블로그 리뷰', `약 ${curBlog}건`, `${afterBlog}건 (+${blog}건 증가)`, curBarPct, afterBarPct],
+              ['방문자(영수증) 리뷰', `약 ${curVisit}건`, `${afterVisit}건 (+${blog}건 서비스포함)`, Math.min(12,curBarPct), afterBarPct],
+              ['예상 월 노출', `약 ${curExposeStr}회`, `${defE}~${maxE}회`, 8, 90],
+              ['검색 노출 순위', '하위권', '상위권 진입 목표', 10, 88]
+            ].map((r,i)=>`
+            <tr style="background:${i%2===0?'#fff':'#F9FAFB'};">
+              <td style="padding:16px 18px;font-weight:700;border-bottom:1px solid #E5E7EB;">${r[0]}</td>
+              <td style="padding:16px 18px;text-align:center;border-bottom:1px solid #E5E7EB;">
+                <div style="color:#EF4444;font-weight:700;margin-bottom:8px;">${r[1]}</div>
+                <div style="background:#FEE2E2;border-radius:9999px;height:10px;"><div style="background:#F87171;height:10px;border-radius:9999px;width:${r[3]}%;transition:width 1s;"></div></div>
+              </td>
+              <td style="padding:16px 18px;text-align:center;border-bottom:1px solid #E5E7EB;">
+                <div style="color:#16A34A;font-weight:900;margin-bottom:8px;">${r[2]}</div>
+                <div style="background:#DCFCE7;border-radius:9999px;height:10px;"><div style="background:#22C55E;height:10px;border-radius:9999px;width:${r[4]}%;transition:width 1s;"></div></div>
+              </td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+        <div style="margin-top:20px;background:#EFF6FF;border-left:5px solid ${pc};border-radius:12px;padding:20px 24px;">
+          <div style="font-size:22px;font-weight:900;color:${pc};">지금 시작하면 3개월 후 매출이 직접 증명합니다</div>
+          <div style="font-size:14px;color:#6B7280;margin-top:8px;line-height:1.7;">리뷰는 한 번 쌓이면 사라지지 않습니다. 지금 시작할수록 경쟁 매장과의 격차는 벌어집니다.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="contact" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+  <div class="bg-white rounded-3xl overflow-hidden border border-stone-200 shadow-2xl">
+
+    <!-- 선착순 특가 배너 -->
+    <div style="background:linear-gradient(135deg,#DC2626,#B91C1C);padding:20px 32px;text-align:center;">
+      <div class="text-white font-black text-2xl mb-1">🔥 이번 달 선착순 3개 업체 한정 특가!</div>
+      <div class="text-red-200 text-base">마감 후 정상가로 복원됩니다</div>
+    </div>
+
+    <!-- 가격 비교 -->
+    <div style="background:#FFF7F7;padding:24px 32px;text-align:center;border-bottom:1px solid #E5E7EB;">
+      <div class="flex items-center justify-center gap-8 flex-wrap">
+        <div>
+          <div style="font-size:13px;color:#9CA3AF;font-weight:600;margin-bottom:4px;">기존 정상가</div>
+          <div style="font-size:32px;font-weight:900;color:#9CA3AF;text-decoration:line-through;">${v.originalC}만원</div>
+        </div>
+        <div style="font-size:32px;font-weight:900;color:#DC2626;">→</div>
+        <div>
+          <div style="font-size:13px;font-weight:700;margin-bottom:4px;" style="color:${pc};">한정 특가</div>
+          <div style="font-size:48px;font-weight:900;color:${pc};">${v.totalC}만원</div>
+        </div>
+        <div style="background:#DC2626;color:#fff;border-radius:50px;padding:10px 20px;font-weight:900;font-size:18px;">
+          ${v.discountRate}% 할인
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2">
+      <div class="img-zoom h-64 lg:h-auto"><img src="${v.imgData.food}" class="w-full h-full object-cover" onerror="this.style.display='none'"></div>
+      <div class="p-10 flex flex-col justify-center">
+        <div class="inline-block px-3 py-1 rounded-full text-sm font-bold mb-4" style="background:${plt};color:${pc};border:1px solid ${pc};width:fit-content;">지금 바로 상담 가능</div>
+        <h2 class="text-2xl font-black mb-5">${v.bName} 사장님,<br>지금 바로 시작하실 수 있습니다</h2>
+
+        <!-- 패키지 요약 -->
+        <div class="rounded-2xl p-5 mb-5" style="background:${plt};border:1px solid ${pc};">
+          <div class="font-black mb-3" style="color:${pc};">📦 이번 특가 패키지 포함 내용</div>
+          <div class="space-y-2 text-base">
+            <div class="flex items-center gap-2"><span style="color:${pc};">✅</span><span>블로그 체험단 <strong>${blog}건</strong></span></div>
+            <div class="flex items-center gap-2"><span style="color:${pc};">✅</span><span>인스타 체험단 <strong>${insta}건</strong></span></div>
+            <div class="flex items-center gap-2"><span style="color:${pc};">✅</span><span class="font-bold" style="color:${pc};">영수증(방문자) 리뷰 +${blog}건 <strong>무료 서비스</strong> ★</span></div>
+            <div class="flex items-center gap-2"><span style="color:${pc};">✅</span><span>3개월 후 리뷰 +${blog+blog+insta}건 누적 예상</span></div>
+          </div>
+        </div>
+
+        <!-- 3개월 변화 한줄 -->
+        <div class="rounded-xl p-4 mb-5 text-sm leading-relaxed" style="background:#F0FDF4;border:1px solid #BBF7D0;color:#166534;">
+          📈 <strong>지금 → 3개월 후:</strong> 리뷰 부족 → 블로그+방문자 리뷰 +${blog}건 누적, 검색 상위권 진입
+        </div>
+
+        <!-- 신뢰 문구 -->
+        <div class="text-sm text-stone-500 mb-6 leading-relaxed">
+          · 상담 후 진행 여부 결정 가능 · 계약 강요 없음<br>
+          · ⚡ 평균 응답시간 10분 이내
+        </div>
+
+        <div class="flex flex-wrap items-center gap-4">
+          <a href="${v.kakaoLink}" target="_blank" class="kakao-btn inline-flex items-center px-8 py-4 rounded-2xl font-black text-lg shadow-lg">
+            <svg class="w-6 h-6 mr-3" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3c-4.97 0-9 3.185-9 7.115 0 2.558 1.707 4.8 4.27 6.054l-.77 2.82c-.083.306.1.6.4.524l3.32-.835c.57.043 1.155.066 1.78.066 4.97 0 9-3.185 9-7.115S16.97 3 12 3z"/></svg>
+            카카오톡으로 문의하기
+          </a>
+          ${v.pTel?`<a href="tel:${v.pTel}" class="text-stone-600 font-bold text-base">📞 ${v.pTel}</a>`:''}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="bg-white border-t border-stone-200 py-14 text-center">
+  <div class="max-w-6xl mx-auto px-4">
+    <div class="text-2xl font-black mb-2">${v.pName} <span style="color:${pc};">×</span> ${v.bName}</div>
+    <p class="text-stone-500 text-sm mb-4">${v.pTel?`전화: ${v.pTel}`:''}</p>
+    <div class="flex justify-center gap-4 text-sm text-stone-400 font-bold flex-wrap mb-6">
+      <span>블로그 체험단</span><span>·</span><span>인스타 체험단</span><span>·</span><span>상위노출 전략</span><span>·</span><span>영수증 리뷰 서비스</span>
+    </div>
+    <a href="https://keyplat.net/review_new_campaign_list.php" target="_blank" class="inline-flex items-center gap-2 px-8 py-4 rounded-2xl font-black text-base text-white transition hover:opacity-90" style="background:${pc};">
+      🔗 홈페이지 보러가기
+    </a>
+  </div>
+</footer>
+
+</body>
+</html>`;
+}
+
+function downloadHTML() {
+  const code = document.getElementById('result-code').value;
+  const bName = document.getElementById('b-name').value.trim() || '제안서';
+  const blob = new Blob([code], {type:'text/html;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = bName + '_제안서.html';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function copyCode() {
+  const ta=document.getElementById('result-code');
+  ta.select();
+  ta.setSelectionRange(0,99999);
+  navigator.clipboard.writeText(ta.value).then(()=>{
+    const b=document.getElementById('copy-btn');
+    b.classList.add('done');
+    b.innerHTML='<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> 복사 완료!';
+    setTimeout(()=>{b.classList.remove('done');b.innerHTML='<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> HTML 복사하기';},3000);
+  }).catch(()=>{ta.select();document.execCommand('copy');alert('복사됐습니다!');});
+}
+
+function resetAll() {
+  if(!confirm('처음부터 다시 입력할까요?')) return;
+  document.querySelectorAll('input,textarea').forEach(el=>{
+    if(el.id==='bp')el.value='40000';
+    else if(el.id==='ip')el.value='30000';
+    else el.value='';
+  });
+  S.blog=20;S.insta=10;S.color='orange';
+  document.getElementById('bn').textContent='20';
+  document.getElementById('in').textContent='10';
+  document.getElementById('receipt-preview').textContent='+20건';
+  updCost();
+  selColor('orange');
+  goStep(1);
+}
+
+document.addEventListener('DOMContentLoaded',()=>{initColors();updCost();});
+</script>
+</body>
+</html>

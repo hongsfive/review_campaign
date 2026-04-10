@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>광고주 상담 시스템 v4.0</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Apple SD Gothic Neo','Malgun Gothic',sans-serif;min-height:100vh;background:linear-gradient(135deg,#fff5f5 0%,#fff8f0 50%,#f5f8ff 100%);padding:2rem 1rem;}
+.wrap{max-width:880px;margin:0 auto;}
+.header{text-align:center;margin-bottom:2rem;}
+.badge{display:inline-block;background:linear-gradient(135deg,#e5503a,#c0392b);border-radius:16px;padding:.5rem 1.4rem;color:white;font-size:13px;font-weight:700;margin-bottom:12px;}
+.header h1{font-size:clamp(1.4rem,4vw,2rem);font-weight:800;color:#1a1a2e;line-height:1.3;margin-bottom:.4rem;}
+.header h1 span{background:linear-gradient(90deg,#e5503a,#c0392b);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.header p{color:#6b7280;font-size:13px;}
+.card{background:white;border-radius:18px;box-shadow:0 6px 28px rgba(229,80,58,.07);padding:1.4rem 1.6rem;margin-bottom:1.1rem;}
+.stitle{font-size:14px;font-weight:800;color:#c0392b;margin-bottom:.9rem;display:flex;align-items:center;gap:8px;}
+.sbadge{border-radius:20px;padding:3px 10px;font-size:11px;font-weight:700;}
+.sb-red{background:#fef2f2;border:1.5px solid #fca5a5;color:#e5503a;}
+.sb-orange{background:#fff7ed;border:1.5px solid #fed7aa;color:#c2410c;}
+.sb-green{background:#f0fdf4;border:1.5px solid #86efac;color:#16a34a;}
+.divider{height:1px;background:linear-gradient(90deg,transparent,#fecaca,transparent);margin:1rem 0;}
+.row{display:flex;gap:10px;flex-wrap:wrap;}
+.col{flex:1 1 190px;}
+.col-s{flex:1 1 130px;}
+label{display:block;font-size:11px;font-weight:700;color:#9ca3af;margin-bottom:4px;}
+input[type=text],input[type=number],select,textarea{width:100%;padding:.58rem .9rem;border-radius:8px;border:1.5px solid #fde8e8;font-size:13px;color:#1a1a2e;background:#fffafa;outline:none;font-family:inherit;transition:border .15s;}
+input:focus,select:focus,textarea:focus{border-color:#e5503a;background:white;}
+textarea{resize:vertical;min-height:80px;}
+.tip{font-size:10px;color:#9ca3af;margin-top:3px;line-height:1.4;}
+.warn{background:#fff7ed;border:1.5px solid #fed7aa;border-radius:10px;padding:.7rem 1rem;font-size:12px;color:#92400e;margin-bottom:.8rem;line-height:1.6;}
+.comp-block{border:1.5px solid #fde8e8;border-radius:12px;padding:.9rem 1.1rem;background:#fffafa;position:relative;margin-bottom:10px;}
+.comp-title{font-size:12px;font-weight:800;color:#e5503a;margin-bottom:8px;}
+.comp-remove{position:absolute;top:10px;right:12px;background:none;border:none;color:#fca5a5;font-size:16px;cursor:pointer;font-weight:700;}
+.comp-remove:hover{color:#e5503a;}
+.add-btn{width:100%;padding:.6rem;border-radius:10px;border:2px dashed #fca5a5;background:white;color:#e5503a;font-size:13px;font-weight:700;cursor:pointer;margin-top:6px;}
+.add-btn:hover{background:#fff5f5;}
+.cost-box{background:linear-gradient(135deg,#fffbeb,#fef3c7);border:2px solid #fcd34d;border-radius:12px;padding:.9rem 1.1rem;margin-bottom:10px;}
+.price-result{background:#f0fdf4;border:1.5px solid #86efac;border-radius:8px;padding:.6rem .9rem;font-size:13px;color:#065f46;font-weight:700;margin-top:6px;display:none;}
+.gen-btn{width:100%;margin-top:1.2rem;padding:1rem;border-radius:14px;border:none;background:linear-gradient(135deg,#e5503a,#c0392b);color:white;font-size:16px;font-weight:800;cursor:pointer;box-shadow:0 4px 18px rgba(229,80,58,.3);transition:transform .15s;}
+.gen-btn:hover{transform:translateY(-2px);}
+.err-box{background:#fef2f2;border:1.5px solid #fca5a5;border-radius:10px;padding:.75rem 1rem;font-size:13px;color:#991b1b;margin-top:.8rem;display:none;}
+.err-box.show{display:block;}
+#resultWrap{display:none;margin-top:1.2rem;}
+#resultWrap.show{display:block;}
+.result-top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:12px;}
+.result-top h3{font-size:16px;font-weight:800;color:#1a1a2e;}
+.btn-dl{padding:.55rem 1.3rem;border-radius:18px;border:none;background:linear-gradient(135deg,#e5503a,#c0392b);color:white;font-weight:700;font-size:13px;cursor:pointer;}
+.btn-dl.done{background:#059669;}
+iframe#preview{width:100%;height:1100px;border:1.5px solid #fde8e8;border-radius:14px;background:white;}
+.footer{text-align:center;color:#fca5a5;font-size:11px;margin-top:1.4rem;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="header">
+  <div class="badge">📋 광고주 상담 시스템 v4.0</div>
+  <h1>정보 입력 →<br><span>인포그래픽 제안서 즉시 생성</span></h1>
+  <p>경쟁사 비교 · 검색 노출 손실 자동 계산 · API 키 불필요 · 즉시 다운로드</p>
+</div>
+
+<!-- STEP1 -->
+<div class="card">
+  <div class="stitle"><span class="sbadge sb-red">STEP 1</span> 광고주 매장 정보</div>
+  <div class="warn">⚠️ 제안을 <b>보낼 업체(광고주 매장)</b> 정보입니다. 내 회사 정보가 아닙니다.</div>
+  <div class="row">
+    <div class="col"><label>매장명 *</label><input type="text" id="shopName" placeholder="예: 수담 한정식 강남점"/></div>
+    <div class="col"><label>주소 (시/구/동)</label><input type="text" id="shopAddr" placeholder="예: 서울 강남구 봉은사로"/></div>
+  </div>
+  <div class="row" style="margin-top:9px;">
+    <div class="col">
+      <label>업종 선택 * (객단가 자동 적용)</label>
+      <select id="shopIndustry" onchange="applyIndustry()">
+        <option value="">-- 업종을 선택하세요 --</option>
+        <optgroup label="── 음식점 ──">
+          <option value="cafe|8000">카페 / 커피숍</option>
+          <option value="bakery|7000">베이커리 / 디저트</option>
+          <option value="korean|13000">한식</option>
+          <option value="hanjungsik|55000">한정식 / 코스요리</option>
+          <option value="chinese|12000">중식</option>
+          <option value="japanese|15000">일식 / 스시 / 초밥</option>
+          <option value="omakase|90000">오마카세 / 파인다이닝</option>
+          <option value="western|18000">양식 / 이탈리안</option>
+          <option value="meat|25000">고기집 / 삼겹살 / 한우</option>
+          <option value="seafood|50000">해산물 / 대게 / 횟집</option>
+          <option value="chicken|18000">치킨 / 분식</option>
+          <option value="lunchbox|7000">도시락 / 김밥</option>
+        </optgroup>
+        <optgroup label="── 뷰티 ──">
+          <option value="hair|50000">헤어샵 / 미용실</option>
+          <option value="nail|40000">네일샵</option>
+          <option value="skin|60000">피부관리 / 에스테틱</option>
+          <option value="massage|50000">마사지 / 스파 / 왁싱</option>
+        </optgroup>
+        <optgroup label="── 건강 / 의료 ──">
+          <option value="fitness|80000">헬스장 / 피트니스</option>
+          <option value="pilates|100000">필라테스 / 요가</option>
+          <option value="clinic|50000">병원 / 의원</option>
+          <option value="dental|100000">치과</option>
+          <option value="oriental|40000">한의원</option>
+        </optgroup>
+        <optgroup label="── 기타 ──">
+          <option value="accommodation|80000">숙박 / 펜션 / 호텔</option>
+          <option value="kids|15000">키즈카페 / 어린이</option>
+          <option value="pet|30000">반려동물 / 펫샵</option>
+          <option value="academy|200000">학원 / 교육</option>
+        </optgroup>
+      </select>
+      <div class="tip" id="industryTip">💡 업종 선택 시 평균 객단가가 자동 적용됩니다.</div>
+    </div>
+    <div class="col">
+      <label>업종 / 대표메뉴명 (제안서 표시용)</label>
+      <input type="text" id="shopType" placeholder="예: 강남 한정식 코스요리 전문"/>
+    </div>
+  </div>
+  <div style="margin-top:12px;">
+    <label>메뉴 & 가격 붙여넣기 <span style="color:#e5503a;font-weight:700;">(객단가 자동 계산 — 추천)</span></label>
+    <textarea id="menuText" placeholder="메뉴판을 복사해서 붙여넣으세요. 가격 숫자를 자동으로 추출해서 평균 객단가를 계산합니다.&#10;예) 점심특선 29,000원 / 진연상 62,000원 / 수라상 82,000원" oninput="calcMenuPrice()"></textarea>
+    <div class="price-result" id="priceResult"></div>
+  </div>
+  <div class="row" style="margin-top:9px;">
+    <div class="col"><label>네이버 방문자 리뷰 수 *</label>
+      <input type="number" id="myVisit" placeholder="예: 240" min="0"/>
+      <div class="tip">💡 네이버 플레이스 > 방문자리뷰 탭</div>
+    </div>
+    <div class="col"><label>네이버 블로그 리뷰 수 *</label>
+      <input type="number" id="myBlog" placeholder="예: 230" min="0"/>
+      <div class="tip">💡 네이버 플레이스 > 블로그리뷰 탭</div>
+    </div>
+  </div>
+</div>
+
+<!-- STEP2 -->
+<div class="card">
+  <div class="stitle"><span class="sbadge sb-red">STEP 2</span> 경쟁사 정보 (최소 1개·최대 3개)</div>
+  <p style="font-size:12px;color:#9ca3af;margin-bottom:11px;">💡 경쟁사 정보가 없으면 지역 평균 기준으로 자동 추정합니다.</p>
+  <div id="compWrap">
+    <div class="comp-block" id="comp-0">
+      <div class="comp-title">🏪 경쟁사 1</div>
+      <div class="row">
+        <div class="col"><label>경쟁사명</label><input type="text" class="cname" placeholder="예: 아부라소바 하나래"/></div>
+        <div class="col"><label>업종</label><input type="text" class="cindustry" placeholder="예: 일식 라멘"/></div>
+      </div>
+      <div class="row" style="margin-top:8px;">
+        <div class="col"><label>방문자 리뷰 수</label><input type="number" class="cvisit" placeholder="예: 440" min="0"/></div>
+        <div class="col"><label>블로그 리뷰 수</label><input type="number" class="cblog" placeholder="예: 650" min="0"/></div>
+      </div>
+    </div>
+  </div>
+  <button class="add-btn" id="addBtn" onclick="addComp()">＋ 경쟁사 추가 (최대 3개)</button>
+</div>
+
+<!-- STEP3 -->
+<div class="card">
+  <div class="stitle"><span class="sbadge sb-orange">STEP 3</span> 제안 패키지 & 내 업체 정보</div>
+  <div class="cost-box">
+    <div style="font-size:12px;font-weight:800;color:#92400e;margin-bottom:8px;">💰 제안 패키지</div>
+    <div class="row">
+      <div class="col-s"><label>특가 월 비용 (만원) *</label><input type="number" id="pkgCost" placeholder="예: 40" min="1"/>
+        <div class="tip">💡 입력값 × 1.9 = 기존가 자동 계산</div>
+      </div>
+      <div class="col-s"><label>블로그 건수</label><input type="number" id="pkgBlog" value="30" min="1"/></div>
+      <div class="col-s"><label>인스타 건수</label><input type="number" id="pkgInsta" value="10" min="0"/></div>
+    </div>
+  </div>
+  <div class="divider"></div>
+  <div style="font-size:12px;font-weight:800;color:#16a34a;margin-bottom:8px;">🏢 내 업체 정보 (제안서 하단에 표시)</div>
+  <div class="row">
+    <div class="col"><label>업체명 *</label><input type="text" id="agentCo" placeholder="예: 바이더헤드"/></div>
+    <div class="col"><label>담당자명</label><input type="text" id="agentName" placeholder="예: 이균재 팀장"/></div>
+  </div>
+  <div class="row" style="margin-top:9px;">
+    <div class="col"><label>전화번호 *</label><input type="text" id="agentTel" placeholder="예: 010-2447-2141"/></div>
+    <div class="col"><label>카카오톡 링크</label><input type="text" id="agentKakao" placeholder="https://pf.kakao.com/_..."/></div>
+  </div>
+  <div class="row" style="margin-top:9px;">
+    <div class="col"><label>한 줄 소개</label><input type="text" id="agentSlogan" placeholder="예: 3개월 후 매출 증가를 경험하게 되실겁니다"/></div>
+  </div>
+</div>
+
+<!-- STEP4 색상 -->
+<div class="card">
+  <div class="stitle"><span class="sbadge" style="background:#f5f3ff;border:1.5px solid #c4b5fd;color:#7c3aed;">STEP 4</span> 제안서 포인트 색상 선택</div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;" id="colorGrid"></div>
+</div>
+
+<div class="err-box" id="errBox"></div>
+<button class="gen-btn" onclick="generate()">📊 인포그래픽 제안서 즉시 생성하기</button>
+
+<div id="resultWrap">
+  <div class="card" style="padding:1.2rem 1.6rem;">
+    <div class="result-top">
+      <h3>📄 제안서 미리보기</h3>
+      <button class="btn-dl" id="dlBtn" onclick="download()">⬇ HTML 파일 다운로드</button>
+    </div>
+    <iframe id="preview"></iframe>
+  </div>
+</div>
+<div class="footer">광고주 상담 시스템 v4.0 · 경쟁사 비교 강화판</div>
+</div>
+
+<script>
+let compCount = 1;
+let resultHtml = "";
+let selectedTheme = { rc:"#E5503A", gc:"#2EAD7B", bc:"#2B5CE6", name:"레드" };
+let calcedPrice = 0;
+
+const COLOR_THEMES = [
+  {name:"레드",   rc:"#E5503A",gc:"#2EAD7B",bc:"#2B5CE6",dot:"#E5503A"},
+  {name:"오렌지", rc:"#EA580C",gc:"#16a34a",bc:"#2563eb",dot:"#EA580C"},
+  {name:"네이비", rc:"#1E3A5F",gc:"#2EAD7B",bc:"#1E3A5F",dot:"#1E3A5F"},
+  {name:"퍼플",   rc:"#7C3AED",gc:"#059669",bc:"#2B5CE6",dot:"#7C3AED"},
+  {name:"그린",   rc:"#16A34A",gc:"#0284c7",bc:"#16A34A",dot:"#16A34A"},
+  {name:"딥로즈", rc:"#BE185D",gc:"#0d9488",bc:"#1d4ed8",dot:"#BE185D"},
+  {name:"차콜",   rc:"#374151",gc:"#059669",bc:"#2563eb",dot:"#374151"},
+  {name:"브라운", rc:"#92400E",gc:"#15803d",bc:"#1d4ed8",dot:"#92400E"},
+];
+
+document.addEventListener("DOMContentLoaded", function() {
+  const grid = document.getElementById("colorGrid");
+  COLOR_THEMES.forEach(t => {
+    const btn = document.createElement("button");
+    btn.style.cssText = "border:2px solid #e5e7eb;border-radius:12px;padding:8px 10px;background:white;cursor:pointer;display:flex;align-items:center;gap:8px;transition:all .2s;width:100%;";
+    btn.innerHTML = `<div style="width:18px;height:18px;border-radius:50%;background:${t.dot};flex-shrink:0;border:2px solid rgba(0,0,0,.1);"></div><div style="font-size:12px;font-weight:700;color:#374151;">${t.name}</div>`;
+    btn.onclick = () => {
+      selectedTheme = t;
+      document.querySelectorAll("#colorGrid button").forEach(b=>{b.style.borderColor="#e5e7eb";b.style.background="white";});
+      btn.style.borderColor=t.dot; btn.style.background="#fafafa";
+    };
+    if (t.name==="레드"){btn.style.borderColor=t.dot;btn.style.background="#fafafa";}
+    grid.appendChild(btn);
+  });
+});
+
+function applyIndustry() {
+  const val = document.getElementById("shopIndustry").value;
+  const tip = document.getElementById("industryTip");
+  if (!val){tip.textContent="💡 업종 선택 시 평균 객단가가 자동 적용됩니다.";tip.style.color="#9ca3af";return;}
+  const price = parseInt(val.split("|")[1]);
+  tip.textContent = `✅ 평균 객단가 ${price.toLocaleString()}원 기준 자동 계산`;
+  tip.style.color="#16a34a";
+}
+
+function calcMenuPrice() {
+  const text = document.getElementById("menuText").value;
+  const matches = text.match(/[\d,]+원/g)||[];
+  const prices = matches.map(m=>parseInt(m.replace(/[,원]/g,""))).filter(p=>p>=1000&&p<=500000);
+  const result = document.getElementById("priceResult");
+  if(prices.length===0){result.style.display="none";calcedPrice=0;return;}
+  const avg = Math.round(prices.reduce((a,b)=>a+b,0)/prices.length);
+  calcedPrice=avg;
+  result.style.display="block";
+  result.textContent=`✅ ${prices.length}개 메뉴 추출 → 평균 객단가 ${avg.toLocaleString()}원 (최저 ${Math.min(...prices).toLocaleString()}원 ~ 최고 ${Math.max(...prices).toLocaleString()}원)`;
+}
+
+function addComp(){
+  if(compCount>=3)return;
+  const wrap=document.getElementById("compWrap");
+  const d=document.createElement("div");
+  d.className="comp-block";d.id="comp-"+compCount;
+  d.innerHTML=`<div class="comp-title">🏪 경쟁사 ${compCount+1}</div>
+    <button class="comp-remove" onclick="removeComp(${compCount})">✕</button>
+    <div class="row">
+      <div class="col"><label>경쟁사명</label><input type="text" class="cname" placeholder="경쟁사명"/></div>
+      <div class="col"><label>업종</label><input type="text" class="cindustry" placeholder="예: 한정식"/></div>
+    </div>
+    <div class="row" style="margin-top:8px;">
+      <div class="col"><label>방문자 리뷰 수</label><input type="number" class="cvisit" placeholder="0" min="0"/></div>
+      <div class="col"><label>블로그 리뷰 수</label><input type="number" class="cblog" placeholder="0" min="0"/></div>
+    </div>`;
+  wrap.appendChild(d);compCount++;
+  if(compCount>=3)document.getElementById("addBtn").style.display="none";
+}
+function removeComp(id){
+  const el=document.getElementById("comp-"+id);
+  if(el)el.remove();compCount--;
+  document.getElementById("addBtn").style.display="block";
+}
+function getComps(){
+  return Array.from(document.querySelectorAll(".comp-block")).map((b,i)=>({
+    name:    b.querySelector(".cname")?.value.trim()||`경쟁사${i+1}`,
+    industry:b.querySelector(".cindustry")?.value.trim()||"",
+    visit:   parseInt(b.querySelector(".cvisit")?.value)||0,
+    blog:    parseInt(b.querySelector(".cblog")?.value)||0,
+  }));
+}
+
+// 업종별 월 매출 기준
+function getMonthlyRevenue(key){
+  const map={
+    cafe:1900,bakery:1900,
+    korean:2100,chinese:2100,japanese:2100,chicken:2100,lunchbox:2100,western:2100,meat:2100,
+    hanjungsik:3600,omakase:3600,seafood:3600,
+    hair:2600,nail:2600,skin:2600,massage:2600,
+    fitness:1800,pilates:1800,
+    clinic:6000,dental:6000,oriental:6000,
+    accommodation:3600,kids:1900,pet:1900,academy:3600,
+  };
+  return map[key]||2100;
+}
+
+// 핵심 계산
+function calcAll(data){
+  const{myVisit,myBlog,priceNum,industryKey,pkgCost,pkgBlog,comps}=data;
+  const comp1Visit=comps[0]?.visit||Math.round(myVisit*2+100);
+  const comp1Blog =comps[0]?.blog ||Math.round(myBlog *2+100);
+
+  // 경쟁력 지수
+  const vMax=Math.max(myVisit,comp1Visit,1),bMax=Math.max(myBlog,comp1Blog,1);
+  const vScore=Math.min(Math.round((myVisit/vMax)*40),40);
+  const bScore=Math.min(Math.round((myBlog /bMax)*30),30);
+  const rankScore=(myVisit>=comp1Visit&&myBlog>=comp1Blog)?30:(myVisit>=comp1Visit||myBlog>=comp1Blog)?18:8;
+  const score=Math.min(vScore+bScore+rankScore,100);
+
+  // 격차
+  const visitGap=Math.max(comp1Visit-myVisit,0);
+  const blogGap =Math.max(comp1Blog -myBlog, 0);
+
+  // 검색 노출 손실 (블로그 리뷰 기반)
+  const myExposure   = myBlog   * 450;
+  const compExposure = comp1Blog * 450;
+  const exposureGap  = Math.max(compExposure - myExposure, 0);
+
+  // 3개월 후 추가 노출
+  const exposureGain = pkgBlog * 450 * 3;
+
+  // 손실 금액: 블로그 격차 × 450 × 3% × 객단가
+  const rawMonthLoss = Math.round(blogGap * 450 * 0.03 * priceNum / 10000);
+
+  // 업종별 월매출 7% 상한
+  const monthlyRevenue = getMonthlyRevenue(industryKey);
+  const maxMonthLoss   = Math.round(monthlyRevenue * 0.07);
+  const monthLoss      = Math.min(rawMonthLoss, maxMonthLoss);
+  const monthLossLo    = Math.max(Math.round(monthLoss*0.85),1);
+  const monthLossHi    = Math.round(monthLoss*1.15);
+  const yearLoss       = Math.round((monthLossLo+monthLossHi)/2*12);
+
+  // 매출 상승 = 손실 회복 기준
+  const monthUpLo = Math.round(monthLossLo*0.8);
+  const monthUpHi = Math.round(monthLossHi*1.2);
+  const roi = pkgCost>0 ? Math.max(Math.round((monthUpLo+monthUpHi)/2/pkgCost),2) : 3;
+
+  return{score,comp1Visit,comp1Blog,visitGap,blogGap,
+    exposureGap,exposureGain,
+    monthLossLo,monthLossHi,yearLoss,
+    monthUpLo,monthUpHi,roi};
+}
+
+function buildHtml(data,calc){
+  const{shopName,shopAddr,shopType,priceNum,myVisit,myBlog,
+        pkgBlog,pkgInsta,pkgCost,agentCo,agentName,agentTel,agentKakao,agentSlogan,comps}=data;
+  const{score,comp1Visit,comp1Blog,visitGap,blogGap,
+        exposureGap,exposureGain,
+        monthLossLo,monthLossHi,yearLoss,
+        monthUpLo,monthUpHi,roi}=calc;
+  const RC=selectedTheme.rc,GC=selectedTheme.gc,BC=selectedTheme.bc;
+  const scoreColor=score>=70?GC:score>=40?"#F59E0B":RC;
+  const visitWin=myVisit>=comp1Visit,blogWin=myBlog>=comp1Blog;
+  const comp1Name=comps[0]?.name||"지역 상위권 평균";
+
+  // 특가 계산
+  const origPrice  = Math.round(pkgCost * 1.9);
+  const discountPct= Math.round((1 - pkgCost/origPrice)*100);
+
+  // 광고비 비교 계산
+  const monthlyBlogExp = pkgBlog * 450;
+  const naverCPC = 500;
+  const naverAdMonthly = Math.round(monthlyBlogExp * naverCPC / 10000);
+  const naverAdYearly  = naverAdMonthly * 12;
+
+  // 바차트 비율
+  const bW=240;
+  const myBlogPct  = Math.round((myBlog /Math.max(myBlog, comp1Blog, 1))*bW);
+  const myVisitPct = Math.round((myVisit/Math.max(myVisit,comp1Visit,1))*bW);
+  const compBlogPct= Math.min(bW, Math.round((comp1Blog/Math.max(myBlog,comp1Blog,1))*bW));
+  const compVisitPct=Math.min(bW, Math.round((comp1Visit/Math.max(myVisit,comp1Visit,1))*bW));
+
+  const makeVsBlock=(c,i)=>{
+    const vw=myVisit>=(c.visit||comp1Visit),bw=myBlog>=(c.blog||comp1Blog);
+    const cn=c.name||comp1Name;
+    const cBlog = c.blog||comp1Blog;
+    const cVisit= c.visit||comp1Visit;
+
+    // 경쟁력 점수 - 절대값 기준 (리뷰 수 구간별 점수)
+    function absScore(blog, visit) {
+      // 블로그 점수 (55점 만점)
+      const bScore = blog >= 1000 ? 50 : blog >= 500 ? 42 : blog >= 300 ? 34 :
+                     blog >= 100  ? 24 : blog >= 50  ? 16 : blog >= 10  ? 10 : 4;
+      // 방문자 점수 (45점 만점)
+      const vScore = visit >= 1000 ? 38 : visit >= 500 ? 32 : visit >= 200 ? 25 :
+                     visit >= 100  ? 18 : visit >= 50  ? 12 : visit >= 10  ? 7  : 3;
+      return Math.min(bScore + vScore, 97); // 최대 97점 (100은 나오지 않음)
+    }
+    const compScore = absScore(cBlog, cVisit);
+    const mineScore = absScore(myBlog, myVisit);
+    const compBarW  = Math.round(compScore * 1.6);
+    const mineBarW  = Math.round(mineScore * 1.6);
+
+    // 검색 노출 비교
+    const compExp = cBlog * 450;
+    const mineExp = myBlog * 450;
+    const expGap  = Math.max(compExp - mineExp, 0);
+
+    return `<div style="border:1.5px solid #e5e7eb;border-radius:12px;overflow:hidden;margin-bottom:10px;">
+      <div style="display:grid;grid-template-columns:1fr 44px 1fr;">
+        <div style="padding:14px;background:#f9fafb;">
+          <div style="font-size:11px;color:#6b7280;font-weight:700;margin-bottom:8px;">🏪 ${cn}${c.industry?' · '+c.industry:''}</div>
+          <div style="margin-bottom:6px;"><span style="font-size:11px;color:#6b7280;">블로그 리뷰</span><br><b style="font-size:18px;color:#374151;">${cBlog.toLocaleString()}개</b></div>
+          <div style="margin-bottom:6px;"><span style="font-size:11px;color:#6b7280;">방문자 리뷰</span><br><b style="font-size:18px;color:#374151;">${cVisit.toLocaleString()}개</b></div>
+          <div style="margin-top:8px;padding:6px 8px;background:#f0fdf4;border-radius:6px;font-size:11px;color:${GC};font-weight:700;">검색 상위 유지 중 ✅</div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:center;background:white;">
+          <div style="background:#1a1a2e;color:white;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:11px;">VS</div>
+        </div>
+        <div style="padding:14px;background:white;">
+          <div style="font-size:11px;color:${RC};font-weight:700;margin-bottom:8px;">📍 ${shopName} 현재</div>
+          <div style="margin-bottom:6px;"><span style="font-size:11px;color:#6b7280;">블로그 리뷰</span><br>
+            <b style="font-size:18px;color:${bw?GC:RC};">${myBlog.toLocaleString()}개</b>
+            <span style="display:inline-block;margin-left:4px;padding:1px 6px;background:${bw?'#f0fdf4':'#fff5f5'};color:${bw?GC:RC};border-radius:4px;font-size:11px;font-weight:700;">${bw?'✅ 우위':'↓ 부족'}</span>
+          </div>
+          <div style="margin-bottom:6px;"><span style="font-size:11px;color:#6b7280;">방문자 리뷰</span><br>
+            <b style="font-size:18px;color:${vw?GC:RC};">${myVisit.toLocaleString()}개</b>
+            <span style="display:inline-block;margin-left:4px;padding:1px 6px;background:${vw?'#f0fdf4':'#fff5f5'};color:${vw?GC:RC};border-radius:4px;font-size:11px;font-weight:700;">${vw?'✅ 우위':'↓ 부족'}</span>
+          </div>
+          <div style="margin-top:8px;padding:6px 8px;background:#fff5f5;border-radius:6px;font-size:11px;color:${RC};font-weight:700;">검색에서 밀리는 중 ⚠️</div>
+        </div>
+      </div>
+      <!-- 경쟁력 점수 게이지 -->
+      <div style="padding:14px 16px;border-top:1px solid #f3f4f6;background:#fafafa;">
+        <div style="font-size:11px;font-weight:800;color:#374151;margin-bottom:10px;">📊 플레이스 경쟁력 점수 비교</div>
+        <div style="margin-bottom:8px;">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+            <span style="font-size:11px;font-weight:700;color:#374151;">${cn}</span>
+            <span style="font-size:11px;font-weight:900;color:${GC};">${compScore}점</span>
+          </div>
+          <div style="height:16px;background:#e5e7eb;border-radius:8px;overflow:hidden;">
+            <div style="height:100%;width:${compBarW}px;max-width:100%;background:linear-gradient(90deg,${GC},#059669);border-radius:8px;display:flex;align-items:center;justify-content:flex-end;padding-right:6px;">
+              <span style="font-size:10px;font-weight:900;color:white;">${compScore}</span>
+            </div>
+          </div>
+        </div>
+        <div style="margin-bottom:10px;">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+            <span style="font-size:11px;font-weight:700;color:#374151;">${shopName}</span>
+            <span style="font-size:11px;font-weight:900;color:${mineScore>=compScore?GC:RC};">${mineScore}점</span>
+          </div>
+          <div style="height:16px;background:#e5e7eb;border-radius:8px;overflow:hidden;">
+            <div style="height:100%;width:${mineBarW}px;max-width:100%;background:${mineScore>=compScore?'linear-gradient(90deg,'+GC+',#059669)':'linear-gradient(90deg,'+BC+','+RC+')'};border-radius:8px;display:flex;align-items:center;justify-content:flex-end;padding-right:6px;">
+              ${mineScore>10?`<span style="font-size:10px;font-weight:900;color:white;">${mineScore}</span>`:''}
+            </div>
+          </div>
+        </div>
+        <!-- 검색 노출 비교 -->
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:10px;background:white;border-radius:8px;border:1px solid #e5e7eb;">
+          <div style="text-align:center;">
+            <div style="font-size:10px;color:#6b7280;margin-bottom:2px;">${cn} 월 노출</div>
+            <div style="font-size:13px;font-weight:900;color:#374151;">${compExp.toLocaleString()}회</div>
+          </div>
+          <div style="text-align:center;border-left:1px solid #e5e7eb;border-right:1px solid #e5e7eb;">
+            <div style="font-size:10px;color:#6b7280;margin-bottom:2px;">${shopName} 월 노출</div>
+            <div style="font-size:13px;font-weight:900;color:${RC};">${mineExp.toLocaleString()}회</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-size:10px;color:#6b7280;margin-bottom:2px;">노출 손실</div>
+            <div style="font-size:13px;font-weight:900;color:${RC};">-${expGap.toLocaleString()}회</div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  };
+  const vsBlocks=comps.length>0?comps.map(makeVsBlock).join(""):makeVsBlock({visit:comp1Visit,blog:comp1Blog,name:comp1Name,industry:""},0);
+
+  return `<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>${shopName} · 네이버 플레이스 매출 누수 진단 리포트</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Malgun Gothic','Apple SD Gothic Neo',sans-serif;background:#F4F5F7;padding:20px;color:#1a1a2e;}
+.page{max-width:900px;margin:0 auto;}
+.card{background:#fff;border-radius:12px;padding:20px;margin-bottom:14px;}
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px;}
+.kpi{background:#fff;border-radius:12px;padding:18px 14px;text-align:center;}
+.kpi.danger{background:#fff5f5;border:1.5px solid #fecaca;}
+.kpi.safe{background:#f0fdf4;border:1.5px solid #bbf7d0;}
+.kpi-val{font-size:24px;font-weight:900;line-height:1.1;margin:6px 0 3px;}
+.kpi-label{font-size:11px;color:#6b7280;}
+.urgent{background:#fff5f5;border:2px solid ${RC};border-radius:12px;padding:20px;margin-bottom:14px;}
+.urgent-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px;}
+.uc{background:#fff;border-radius:10px;padding:14px;text-align:center;border:1px solid #fde8e8;}
+.uc.fire{background:${RC};color:#fff;border-color:${RC};}
+.uc-val{font-size:20px;font-weight:900;margin:5px 0 3px;}
+.uc-label{font-size:10px;}
+/* 경쟁사·격차 섹션 */
+.compare-section{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+/* 격차 시각화 */
+.gap-bar-wrap{margin-bottom:16px;}
+.gap-bar-label{font-size:12px;font-weight:700;color:#374151;margin-bottom:6px;}
+.gap-bar-track{position:relative;height:28px;background:#f3f4f6;border-radius:8px;overflow:hidden;margin-bottom:4px;}
+.gap-bar-comp{position:absolute;left:0;top:0;height:100%;border-radius:8px;display:flex;align-items:center;justify-content:flex-end;padding-right:8px;}
+.gap-bar-mine{position:absolute;left:0;top:0;height:100%;border-radius:8px;display:flex;align-items:center;justify-content:flex-end;padding-right:8px;}
+.gap-bar-num{font-size:11px;font-weight:900;color:white;}
+.gap-bar-info{display:flex;justify-content:space-between;font-size:11px;color:#6b7280;}
+/* 효과 섹션 */
+.effect-section{background:#fff;border-radius:12px;padding:24px;margin-bottom:14px;}
+.effect-header{text-align:center;margin-bottom:20px;}
+.effect-header h3{font-size:17px;font-weight:900;color:#1a1a2e;margin-bottom:4px;}
+.effect-header p{font-size:12px;color:#6b7280;}
+.effect-grid{display:grid;grid-template-columns:1fr 44px 1fr;gap:0;align-items:center;margin-bottom:20px;}
+.effect-col{border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:14px;}
+.effect-col.now{background:#fff5f5;border:2px solid #fecaca;}
+.effect-col.after{background:#f0fdf4;border:2px solid #bbf7d0;}
+.effect-col-title{font-size:13px;font-weight:900;text-align:center;padding:9px;border-radius:8px;margin-bottom:4px;}
+.effect-col.now .effect-col-title{background:#fecaca;color:${RC};}
+.effect-col.after .effect-col-title{background:#bbf7d0;color:#065f46;}
+.effect-arrow{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:#9ca3af;}
+.effect-item-label{font-size:11px;color:#6b7280;font-weight:600;margin-bottom:2px;}
+.effect-item-val{font-size:20px;font-weight:900;line-height:1.1;}
+/* 특가 박스 */
+.special-pkg{background:#1a1a2e;border-radius:14px;padding:20px 24px;margin-bottom:20px;position:relative;overflow:hidden;}
+.special-pkg::before{content:'';position:absolute;top:0;right:0;width:200px;height:100%;background:linear-gradient(90deg,transparent,${RC}22);}
+.special-badge{display:inline-block;background:${RC};color:white;font-size:11px;font-weight:800;padding:4px 12px;border-radius:20px;margin-bottom:10px;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.7;}}
+.special-orig{font-size:13px;color:#9ca3af;text-decoration:line-through;margin-bottom:4px;}
+.special-price{font-size:36px;font-weight:900;color:${RC};line-height:1;}
+.special-discount{display:inline-block;background:${RC};color:white;font-size:12px;font-weight:800;padding:3px 10px;border-radius:6px;margin-left:10px;vertical-align:middle;}
+.special-desc{font-size:12px;color:#9ca3af;margin-top:8px;}
+/* 이유 */
+.reason-section{background:#fff;border-radius:12px;padding:20px;margin-bottom:14px;}
+.reason-item{display:flex;gap:12px;padding:12px 14px;border-radius:10px;margin-bottom:8px;border:1px solid #f3f4f6;}
+.reason-item:last-child{background:#fff5f5;border:1.5px solid #fecaca;margin-bottom:0;}
+.reason-num{width:28px;height:28px;border-radius:50%;background:${RC};color:white;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.reason-title{font-size:13px;font-weight:800;margin-bottom:4px;}
+.reason-desc{font-size:11px;color:#6b7280;line-height:1.7;}
+.roi-bar{background:#1a1a2e;border-radius:12px;padding:20px 26px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:14px;}
+.roi-badges{display:flex;gap:10px;flex-wrap:wrap;}
+.rbg{background:${GC};color:#fff;border-radius:10px;padding:12px 18px;text-align:center;}
+.rbr{background:${RC};color:#fff;border-radius:10px;padding:12px 18px;text-align:center;}
+.rb-val{font-size:22px;font-weight:900;line-height:1;}
+.rb-label{font-size:10px;margin-top:3px;}
+.agent-box{background:#fff;border-radius:12px;border-top:3px solid ${RC};padding:20px 22px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;margin-bottom:14px;}
+.contact-tel{display:inline-block;padding:9px 16px;background:#1a1a2e;color:#fff;border-radius:8px;font-weight:700;font-size:13px;text-decoration:none;margin-right:8px;}
+.contact-kk{display:inline-block;padding:9px 16px;background:#FEE500;color:#191919;border-radius:8px;font-weight:700;font-size:13px;text-decoration:none;}
+.footer-bar{display:flex;justify-content:space-between;font-size:10px;color:#9ca3af;padding:12px 4px;}
+@media(max-width:640px){.kpi-grid,.urgent-grid{grid-template-columns:1fr 1fr;}.compare-section{grid-template-columns:1fr;}.effect-grid{grid-template-columns:1fr;}.effect-arrow{display:none;}}
+
+/* ===== 인쇄 스타일 ===== */
+@media print {
+  @page {
+    size: A4;
+    margin: 10mm 10mm 10mm 10mm;
+    /* 브라우저 기본 머리글/바닥글(URL, 날짜, 페이지번호) 제거 */
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+  @page :first {
+    margin-top: 0;
+  }
+  html, body {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+    background: white !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    font-size: 11px !important;
+  }
+  .page {
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  /* 핵심: 카드/섹션이 페이지 경계에서 잘리지 않도록 */
+  .card,
+  .kpi-grid,
+  .urgent,
+  .urgent-grid,
+  .effect-section,
+  .effect-grid,
+  .special-pkg,
+  .ad-compare,
+  .reason-item,
+  .roi-bar,
+  .agent-box,
+  .compare-section,
+  .comp-block,
+  .gap-bar-wrap {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+  /* reason-section은 페이지에 걸쳐 흐르도록 허용 (개별 reason-item만 보호) */
+  .reason-section {
+    page-break-inside: auto !important;
+    break-inside: auto !important;
+  }
+  /* 마지막 요소 뒤 불필요한 빈 페이지 방지 */
+  .footer-bar {
+    page-break-after: avoid !important;
+    break-after: avoid !important;
+  }
+  /* 그림자/테두리 정리 */
+  .card {
+    box-shadow: none !important;
+    border: 1px solid #e5e7eb !important;
+  }
+  /* KPI 그리드 인쇄 시 한 줄 유지 */
+  .kpi-grid {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+  .urgent-grid {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+  /* 비교 섹션 2열 유지 */
+  .compare-section {
+    grid-template-columns: 1fr 1fr !important;
+  }
+  /* 효과 비교 3열 유지 */
+  .effect-grid {
+    grid-template-columns: 1fr 44px 1fr !important;
+  }
+  .effect-arrow {
+    display: flex !important;
+  }
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- 헤더 -->
+<div class="card" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;border-bottom:3px solid ${RC};border-radius:12px 12px 0 0;margin-bottom:0;padding:20px 22px;">
+  <div>
+    <h1 style="font-size:19px;font-weight:900;margin-bottom:4px;">${shopName} · 네이버 플레이스 매출 누수 진단 리포트</h1>
+    <p style="font-size:12px;color:#6b7280;">📍 ${shopAddr}${shopAddr&&shopType?' · ':''}${shopType}</p>
+  </div>
+  <div style="text-align:center;">
+    <div style="width:68px;height:68px;border-radius:50%;border:3px solid ${scoreColor};display:flex;flex-direction:column;align-items:center;justify-content:center;">
+      <div style="font-size:26px;font-weight:900;color:${scoreColor};line-height:1;">${score}</div>
+      <div style="font-size:9px;color:#6b7280;">점</div>
+    </div>
+    <div style="font-size:10px;color:#6b7280;margin-top:4px;">플레이스 경쟁력 지수</div>
+  </div>
+</div>
+
+<!-- KPI -->
+<div class="kpi-grid" style="margin-top:14px;">
+  <div class="kpi">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style="margin:0 auto 4px;display:block;"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" stroke="${BC}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <div class="kpi-val" style="color:${BC};">${myVisit.toLocaleString()}</div>
+    <div class="kpi-label">방문자 리뷰</div>
+  </div>
+  <div class="kpi">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style="margin:0 auto 4px;display:block;"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" stroke="${BC}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><polyline points="14 2 14 8 20 8" stroke="${BC}" stroke-width="2"/></svg>
+    <div class="kpi-val" style="color:${BC};">${myBlog.toLocaleString()}</div>
+    <div class="kpi-label">블로그 리뷰</div>
+  </div>
+  <div class="kpi ${blogWin?'safe':'danger'}">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style="margin:0 auto 4px;display:block;"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" stroke="${blogWin?GC:RC}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="12" y1="9" x2="12" y2="13" stroke="${blogWin?GC:RC}" stroke-width="2" stroke-linecap="round"/><line x1="12" y1="17" x2="12.01" y2="17" stroke="${blogWin?GC:RC}" stroke-width="2" stroke-linecap="round"/></svg>
+    <div class="kpi-val" style="color:${blogWin?GC:RC};">${blogWin?'우위':blogGap.toLocaleString()+'개'}</div>
+    <div class="kpi-label">블로그 리뷰 ${blogWin?'우위':'부족분'}</div>
+  </div>
+  <div class="kpi danger">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style="margin:0 auto 4px;display:block;"><text x="12" y="17" text-anchor="middle" font-size="16" font-weight="900" fill="${RC}" font-family="Malgun Gothic">₩</text></svg>
+    <div class="kpi-val" style="color:${RC};">${yearLoss}만원</div>
+    <div class="kpi-label">연간 기회비용 손실</div>
+  </div>
+</div>
+
+<!-- 경쟁사 비교 + 격차 시각화 (개선) -->
+<div class="compare-section">
+  <div class="card">
+    <div style="font-size:13px;font-weight:800;margin-bottom:14px;">📊 경쟁사 vs ${shopName} 비교</div>
+    ${vsBlocks}
+  </div>
+  <div class="card">
+    <div style="font-size:13px;font-weight:800;margin-bottom:16px;">📈 리뷰 격차 시각화</div>
+
+    <!-- 블로그 리뷰 바차트 -->
+    <div class="gap-bar-wrap">
+      <div class="gap-bar-label">📝 블로그 리뷰 비교</div>
+      <div style="margin-bottom:4px;">
+        <div style="font-size:11px;color:#6b7280;margin-bottom:3px;">경쟁사 (${comp1Blog.toLocaleString()}개)</div>
+        <div class="gap-bar-track">
+          <div class="gap-bar-comp" style="width:${compBlogPct}px;background:#d1d5db;">
+            <span class="gap-bar-num" style="color:#374151;">${comp1Blog.toLocaleString()}</span>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:11px;color:#6b7280;margin-bottom:3px;">내 매장 (${myBlog.toLocaleString()}개)</div>
+        <div class="gap-bar-track">
+          <div class="gap-bar-mine" style="width:${myBlogPct}px;background:${blogWin?GC:'linear-gradient(90deg,'+BC+','+RC+')'};min-width:${myBlog>0?'30px':'4px'};">
+            ${myBlog>0?`<span class="gap-bar-num">${myBlog.toLocaleString()}</span>`:''}
+          </div>
+        </div>
+      </div>
+      ${blogGap>0?`<div style="margin-top:6px;padding:6px 10px;background:#fff5f5;border-radius:6px;font-size:11px;color:${RC};font-weight:700;">⚠️ 경쟁사보다 ${blogGap.toLocaleString()}개 부족 → 월 검색 노출 ${(blogGap*450).toLocaleString()}회 손실</div>`
+      :`<div style="margin-top:6px;padding:6px 10px;background:#f0fdf4;border-radius:6px;font-size:11px;color:${GC};font-weight:700;">✅ 경쟁사보다 ${Math.abs(blogGap).toLocaleString()}개 앞서 있습니다</div>`}
+    </div>
+
+    <!-- 방문자 리뷰 바차트 -->
+    <div class="gap-bar-wrap">
+      <div class="gap-bar-label">💬 방문자 리뷰 비교</div>
+      <div style="margin-bottom:4px;">
+        <div style="font-size:11px;color:#6b7280;margin-bottom:3px;">경쟁사 (${comp1Visit.toLocaleString()}개)</div>
+        <div class="gap-bar-track">
+          <div class="gap-bar-comp" style="width:${compVisitPct}px;background:#d1d5db;">
+            <span class="gap-bar-num" style="color:#374151;">${comp1Visit.toLocaleString()}</span>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:11px;color:#6b7280;margin-bottom:3px;">내 매장 (${myVisit.toLocaleString()}개)</div>
+        <div class="gap-bar-track">
+          <div class="gap-bar-mine" style="width:${myVisitPct}px;background:${visitWin?GC:'linear-gradient(90deg,'+BC+','+RC+')'};min-width:${myVisit>0?'30px':'4px'};">
+            ${myVisit>0?`<span class="gap-bar-num">${myVisit.toLocaleString()}</span>`:''}
+          </div>
+        </div>
+      </div>
+      ${visitGap>0?`<div style="margin-top:6px;padding:6px 10px;background:#fff5f5;border-radius:6px;font-size:11px;color:${RC};font-weight:700;">⚠️ 경쟁사보다 ${visitGap.toLocaleString()}개 부족</div>`
+      :`<div style="margin-top:6px;padding:6px 10px;background:#f0fdf4;border-radius:6px;font-size:11px;color:${GC};font-weight:700;">✅ 경쟁사보다 ${Math.abs(visitGap).toLocaleString()}개 앞서 있습니다</div>`}
+    </div>
+
+    <!-- 검색 노출 요약 -->
+    <div style="background:#1a1a2e;border-radius:10px;padding:14px;text-align:center;">
+      <div style="font-size:11px;color:#9ca3af;margin-bottom:4px;">경쟁사보다 매달 덜 검색되는 횟수</div>
+      <div style="font-size:26px;font-weight:900;color:${RC};">${exposureGap.toLocaleString()}회</div>
+      <div style="font-size:11px;color:#9ca3af;margin-top:4px;">= ${comp1Name}이 내 매장 대신 노출되는 횟수</div>
+    </div>
+  </div>
+</div>
+
+<!-- 긴급 알림 -->
+<div class="urgent">
+  <div style="font-size:16px;font-weight:900;color:#1a1a2e;margin-bottom:3px;">
+    ⚠️ 지금 이 순간에도 경쟁사가 <strong style="color:${RC};">${exposureGap.toLocaleString()}회</strong> 더 검색되고 있습니다.
+  </div>
+  <div style="font-size:11px;color:#6b7280;margin-bottom:14px;">${shopAddr?shopAddr+' · ':''}${shopType||'해당 업종'} 블로그 리뷰 격차 기준 추산</div>
+  <div class="urgent-grid">
+    <div class="uc">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style="margin:0 auto 4px;display:block;"><circle cx="11" cy="11" r="8" stroke="${RC}" stroke-width="2"/><path d="M21 21l-4.35-4.35" stroke="${RC}" stroke-width="2" stroke-linecap="round"/></svg>
+      <div class="uc-val" style="color:${RC};">${exposureGap.toLocaleString()}회</div>
+      <div class="uc-label">월 검색 노출 손실</div>
+    </div>
+    <div class="uc">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style="margin:0 auto 4px;display:block;"><text x="12" y="17" text-anchor="middle" font-size="16" font-weight="900" fill="${RC}" font-family="Malgun Gothic">₩</text></svg>
+      <div class="uc-val" style="color:${RC};">${monthLossLo}만원</div>
+      <div class="uc-label">월 기회비용 손실</div>
+    </div>
+    <div class="uc">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style="margin:0 auto 4px;display:block;"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18" stroke="${RC}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><polyline points="17 6 23 6 23 12" stroke="${RC}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div class="uc-val" style="color:${RC};">${yearLoss}만원</div>
+      <div class="uc-label">연간 누적 기회손실</div>
+    </div>
+    <div class="uc fire">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style="margin:0 auto 4px;display:block;"><circle cx="12" cy="12" r="10" stroke="white" stroke-width="2"/><polyline points="12 6 12 12 16 14" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div class="uc-val" style="color:white;font-size:13px;font-weight:900;">지금 시작 안 하면<br>회복 비용 2배↑</div>
+      <div class="uc-label" style="color:rgba(255,255,255,.8);">늦을수록 격차 심화</div>
+    </div>
+  </div>
+</div>
+
+<!-- 효과 섹션 -->
+<div class="effect-section">
+  <div class="effect-header">
+    <h3>✅ 블로그 체험단 ${pkgBlog}건${pkgInsta>0?` + 인스타 ${pkgInsta}건`:''} · 소진시까지 진행하면?</h3>
+    <p>지금 vs 3개월 후 — 숫자로 직접 확인하세요</p>
+  </div>
+  <div class="effect-grid">
+    <div class="effect-col now">
+      <div class="effect-col-title">😔 지금 이대로라면...</div>
+      <div>
+        <div class="effect-item-label">월 검색 노출 손실</div>
+        <div class="effect-item-val" style="color:${RC};">${exposureGap.toLocaleString()}회</div>
+      </div>
+      <div>
+        <div class="effect-item-label">월 매출 손실</div>
+        <div class="effect-item-val" style="color:${RC};">${monthLossLo}만원</div>
+      </div>
+      <div>
+        <div class="effect-item-label">블로그 리뷰</div>
+        <div class="effect-item-val" style="color:${RC};">${myBlog}개 ${blogWin?'(우위)':'(부족)'}</div>
+      </div>
+      <div>
+        <div class="effect-item-label">검색 노출 순위</div>
+        <div class="effect-item-val" style="color:${RC};">경쟁사에 밀림</div>
+      </div>
+      <div>
+        <div class="effect-item-label">연간 누적 손실</div>
+        <div class="effect-item-val" style="color:${RC};">${yearLoss}만원</div>
+      </div>
+    </div>
+    <div class="effect-arrow">
+      <div style="font-size:28px;">→</div>
+      <div style="font-size:10px;color:#9ca3af;text-align:center;">3개월<br>후</div>
+    </div>
+    <div class="effect-col after">
+      <div class="effect-col-title">🎯 3개월 후 달라지는 것</div>
+      <div>
+        <div class="effect-item-label">추가 검색 노출</div>
+        <div class="effect-item-val" style="color:${GC};">+${exposureGain.toLocaleString()}회</div>
+      </div>
+      <div>
+        <div class="effect-item-label">월 매출 상승</div>
+        <div class="effect-item-val" style="color:${GC};">${monthUpLo}~${monthUpHi}만원</div>
+      </div>
+      <div>
+        <div class="effect-item-label">블로그 리뷰</div>
+        <div class="effect-item-val" style="color:${GC};">+${pkgBlog}~${Math.round(pkgBlog*1.5)}건</div>
+      </div>
+      <div>
+        <div class="effect-item-label">검색 노출 순위</div>
+        <div class="effect-item-val" style="color:${GC};">상위권 고정</div>
+      </div>
+      <div>
+        <div class="effect-item-label">투자 대비 ROI</div>
+        <div class="effect-item-val" style="color:${GC};">${roi}~${roi+2}배</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 💰 광고비 비교: 블로그 체험단 vs 네이버 유료광고 -->
+  <div class="ad-compare" style="background:white;border-radius:14px;border:2px solid #e5e7eb;padding:24px;margin-bottom:20px;">
+    <div style="text-align:center;margin-bottom:20px;">
+      <div style="font-size:17px;font-weight:900;color:#1a1a2e;">💰 같은 노출, 비용 차이는?</div>
+      <div style="font-size:12px;color:#6b7280;margin-top:4px;">블로그 ${pkgBlog}건 기준 월 ${monthlyBlogExp.toLocaleString()}회 노출을 광고로 하면</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 40px 1fr;gap:0;align-items:stretch;">
+      <div style="background:#fff5f5;border:2px solid #fecaca;border-radius:14px;padding:20px;text-align:center;">
+        <div style="font-size:13px;font-weight:800;color:${RC};margin-bottom:16px;">❌ 네이버 유료광고</div>
+        <div style="margin-bottom:14px;">
+          <div style="font-size:11px;color:#6b7280;">월 광고비</div>
+          <div style="font-size:26px;font-weight:900;color:${RC};">${naverAdMonthly}만원</div>
+        </div>
+        <div style="margin-bottom:14px;">
+          <div style="font-size:11px;color:#6b7280;">12개월 합계</div>
+          <div style="font-size:22px;font-weight:900;color:${RC};">${naverAdYearly}만원</div>
+        </div>
+        <div style="padding:8px 10px;background:#fecaca;border-radius:8px;font-size:11px;font-weight:700;color:#991b1b;">
+          광고 끄면 노출 즉시 0
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center;">
+        <div style="background:#1a1a2e;color:white;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:11px;">VS</div>
+      </div>
+      <div style="background:#f0fdf4;border:2px solid #bbf7d0;border-radius:14px;padding:20px;text-align:center;">
+        <div style="font-size:13px;font-weight:800;color:${GC};margin-bottom:16px;">✅ 블로그 체험단</div>
+        <div style="margin-bottom:14px;">
+          <div style="font-size:11px;color:#6b7280;">1회 비용</div>
+          <div style="font-size:26px;font-weight:900;color:${GC};">${pkgCost}만원</div>
+        </div>
+        <div style="margin-bottom:14px;">
+          <div style="font-size:11px;color:#6b7280;">12개월 후에도</div>
+          <div style="font-size:22px;font-weight:900;color:${GC};">계속 노출</div>
+        </div>
+        <div style="padding:8px 10px;background:#bbf7d0;border-radius:8px;font-size:11px;font-weight:700;color:#065f46;">
+          영구 검색 자산으로 축적
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:16px;background:#1a1a2e;border-radius:10px;padding:16px;text-align:center;">
+      <div style="font-size:11px;color:#9ca3af;margin-bottom:4px;">연간 광고비 절감 효과</div>
+      <div style="font-size:30px;font-weight:900;color:${GC};">${naverAdYearly - pkgCost}만원 절약</div>
+      <div style="font-size:11px;color:#9ca3af;margin-top:4px;">네이버 검색광고 CPC ${naverCPC}원 기준 · 블로그 1건당 월 450회 노출 추산</div>
+    </div>
+  </div>
+
+  <!-- 특가 박스 (리디자인) -->
+  <div class="special-pkg" style="background:linear-gradient(135deg,#1a1a2e 0%,#2d2d44 100%);border-radius:16px;padding:30px;margin-bottom:20px;position:relative;overflow:hidden;">
+    <div style="position:absolute;top:-40px;right:-40px;width:140px;height:140px;background:${RC};opacity:0.1;border-radius:50%;"></div>
+    <div style="position:absolute;bottom:-30px;left:-30px;width:100px;height:100px;background:${GC};opacity:0.08;border-radius:50%;"></div>
+    <div style="text-align:center;margin-bottom:18px;position:relative;">
+      <div style="display:inline-block;background:${RC};color:white;font-size:13px;font-weight:800;padding:7px 18px;border-radius:20px;animation:pulse 2s infinite;">🔥 선착순 3개 업체만 · 한정 특가</div>
+    </div>
+    <div style="display:flex;justify-content:center;align-items:center;gap:24px;flex-wrap:wrap;position:relative;">
+      <div style="text-align:center;">
+        <div style="font-size:13px;color:#9ca3af;margin-bottom:8px;">블로그 ${pkgBlog}건${pkgInsta>0?` + 인스타 ${pkgInsta}건`:''} · 소진시까지 · 순차 업로드</div>
+        <div style="font-size:15px;color:#6b7280;text-decoration:line-through;margin-bottom:6px;">기존가 ${origPrice}만원</div>
+        <div style="display:flex;align-items:center;justify-content:center;gap:14px;">
+          <div style="font-size:52px;font-weight:900;color:white;line-height:1;">${pkgCost}<span style="font-size:26px;">만원</span><span style="font-size:11px;font-weight:500;color:#9ca3af;margin-left:4px;vertical-align:middle;">(VAT별도)</span></div>
+          <div style="background:${RC};color:white;font-size:18px;font-weight:900;padding:10px 16px;border-radius:12px;line-height:1.2;">${discountPct}%<br><span style="font-size:11px;font-weight:600;">할인</span></div>
+        </div>
+        <div style="font-size:12px;color:#fca5a5;margin-top:12px;font-weight:600;">⚡ 선착순 3개 업체 마감 시 특가 종료 · 지금 바로 문의하세요</div>
+      </div>
+      <div style="background:rgba(255,255,255,.06);border-radius:14px;padding:22px 30px;border:1px solid rgba(255,255,255,.12);text-align:center;">
+        <div style="font-size:11px;color:#9ca3af;margin-bottom:6px;">투자 대비 ROI</div>
+        <div style="font-size:42px;font-weight:900;color:${RC};line-height:1;">${roi}~${roi+2}배</div>
+        <div style="font-size:12px;color:#9ca3af;margin-top:8px;">${pkgCost}만원 투자 →<br><b style="color:white;">${monthUpLo}~${monthUpHi}만원</b> 회수</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 지금 시작해야 하는 이유 -->
+<div class="reason-section">
+  <div style="font-size:15px;font-weight:900;margin-bottom:14px;">ℹ️ 지금 시작해야 하는 이유</div>
+  <div class="reason-item">
+    <div class="reason-num">1</div>
+    <div>
+      <div class="reason-title">경쟁사와의 격차, 지금도 매일 벌어지고 있습니다</div>
+      <div class="reason-desc">${comp1Name}은 현재 블로그 <b style="color:#374151;">${comp1Blog.toLocaleString()}개</b>로 검색 상위를 유지 중입니다.<br>오늘도 새 리뷰가 쌓이는 동안 ${shopName}과의 격차는 매일 벌어집니다. <b style="color:${RC};">6개월 후에는 격차가 지금의 2배</b>가 될 수 있습니다.</div>
+    </div>
+  </div>
+  <div class="reason-item">
+    <div class="reason-num">2</div>
+    <div>
+      <div class="reason-title">리뷰 1개가 만드는 검색 노출 효과</div>
+      <div class="reason-desc">블로그 리뷰 1건의 평균 노출은 <b style="color:#374151;">월 200~3,000회</b>입니다.<br>체험단 ${pkgBlog}건이면 <b style="color:${GC};">+${exposureGain.toLocaleString()}회</b> 추가 노출 — 유료 광고 없이 만들어지는 <b style="color:${GC};">검색 자산</b>입니다.</div>
+    </div>
+  </div>
+  <div class="reason-item">
+    <div class="reason-num">3</div>
+    <div>
+      <div class="reason-title">늦게 시작할수록 회복 비용이 2배 이상 올라갑니다</div>
+      <div class="reason-desc">지금은 특가 <b style="color:${RC};">${pkgCost}만원</b>으로 시작 가능합니다.<br>격차가 더 벌어지면 따라잡는 데 2배 이상의 비용과 기간이 필요합니다.<br>3~4개월 후 검색 상위권이 고정되면 <b style="color:${GC};">추가 비용 없이 노출이 유지</b>됩니다.</div>
+    </div>
+  </div>
+  <div class="reason-item">
+    <div class="reason-num">4</div>
+    <div>
+      <div class="reason-title" style="color:${RC};">지금 이 순간에도 월 ${monthLossLo}만원이 경쟁사로 넘어가고 있습니다</div>
+      <div class="reason-desc">경쟁사보다 <b style="color:${RC};">${exposureGap.toLocaleString()}회</b> 덜 검색되는 동안 잠재 손님들이 경쟁 매장을 먼저 찾습니다.<br>연간으로 환산하면 <b style="color:${RC};">${yearLoss}만원</b>의 매출 기회를 잃는 것입니다.<br>지금 시작하면 <b style="color:${GC};">3~4개월 후 역전 가능</b>합니다.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ROI 배너 -->
+<div class="roi-bar">
+  <div>
+    <p style="font-size:11px;color:#9ca3af;margin-bottom:4px;">블로그 체험단 ${pkgBlog}건 · 소진시까지 · 투자 대비 ${roi}~${roi+2}배 ROI 달성 기대</p>
+    <h3 style="font-size:16px;font-weight:900;color:white;">📈 지금 시작하면 3개월 후, 매출이 직접 증명합니다</h3>
+  </div>
+  <div class="roi-badges">
+    <div class="rbg"><div class="rb-val">${monthUpLo}~${monthUpHi}만원</div><div class="rb-label">월 예상 매출 상승</div></div>
+    <div class="rbr"><div class="rb-val">${roi}~${roi+2}배</div><div class="rb-label">투자 대비 ROI</div></div>
+  </div>
+</div>
+
+<!-- 제안 업체 -->
+<div class="agent-box">
+  <div>
+    <h3 style="font-size:17px;font-weight:900;margin-bottom:4px;">${agentCo}${agentName?' · '+agentName:''}</h3>
+    <p style="font-size:12px;color:#6b7280;margin-bottom:10px;">${agentSlogan||'블로그 체험단 전문 · 네이버 플레이스 상위노출 전략'}</p>
+    <div>
+      <a href="tel:${agentTel}" class="contact-tel">📞 ${agentTel}</a>
+      ${agentKakao?`<a href="${agentKakao}" target="_blank" class="contact-kk">💬 카카오톡 상담하기</a>`:''}
+    </div>
+  </div>
+  <div style="text-align:center;padding:14px 20px;background:#f9fafb;border-radius:10px;border:1.5px solid #e5e7eb;">
+    <div style="font-size:11px;color:#6b7280;margin-bottom:5px;">지금 바로 상담하세요</div>
+    <div style="font-size:22px;font-weight:900;color:${RC};">${agentTel}</div>
+    ${agentName?`<div style="font-size:11px;color:#6b7280;margin-top:2px;">${agentName} 직통</div>`:''}
+  </div>
+</div>
+
+<!-- 푸터 -->
+<div class="footer-bar">
+  <span>※ 본 분석은 네이버 플레이스 공개 데이터 및 블로그 리뷰 격차 기반 추정입니다. 실제 효과는 시장 상황에 따라 달라질 수 있습니다.</span>
+  <span style="font-weight:700;color:#374151;">MARKETING DIAGNOSIS</span>
+</div>
+</div>
+</body>
+</html>`;
+}
+
+function generate(){
+  const shopName   =document.getElementById("shopName").value.trim();
+  const shopAddr   =document.getElementById("shopAddr").value.trim()||"";
+  const shopType   =document.getElementById("shopType").value.trim();
+  const industryVal=document.getElementById("shopIndustry").value;
+  const myVisit    =parseInt(document.getElementById("myVisit").value)||0;
+  const myBlog     =parseInt(document.getElementById("myBlog").value) ||0;
+  const pkgCost    =parseInt(document.getElementById("pkgCost").value)||0;
+  const pkgBlog    =parseInt(document.getElementById("pkgBlog").value)||30;
+  const pkgInsta   =parseInt(document.getElementById("pkgInsta").value)||0;
+  const agentCo    =document.getElementById("agentCo").value.trim();
+  const agentName  =document.getElementById("agentName").value.trim();
+  const agentTel   =document.getElementById("agentTel").value.trim();
+  const agentKakao =document.getElementById("agentKakao").value.trim();
+  const agentSlogan=document.getElementById("agentSlogan").value.trim();
+  const comps      =getComps();
+
+  const industryParts=industryVal?industryVal.split("|"):[];
+  const industryKey  =industryParts[0]||"korean";
+  const industryPrice=parseInt(industryParts[1])||15000;
+  const priceNum     =calcedPrice>0?calcedPrice:industryPrice;
+
+  const err=document.getElementById("errBox");
+  err.className="err-box";
+  if(!shopName)   {err.className="err-box show";err.textContent="⚠️ 매장명을 입력해주세요.";return;}
+  if(!industryVal&&!calcedPrice){err.className="err-box show";err.textContent="⚠️ 업종을 선택하거나 메뉴를 입력해주세요.";return;}
+  if(!pkgCost)    {err.className="err-box show";err.textContent="⚠️ 월 패키지 비용을 입력해주세요.";return;}
+  if(!agentCo)    {err.className="err-box show";err.textContent="⚠️ 업체명을 입력해주세요.";return;}
+  if(!agentTel)   {err.className="err-box show";err.textContent="⚠️ 전화번호를 입력해주세요.";return;}
+
+  const displayType=shopType||(industryParts[0]?document.getElementById("shopIndustry").selectedOptions[0]?.text?.replace(/\s*\(.*\)/,""):"");
+  const data={shopName,shopAddr,shopType:displayType,priceNum,industryKey,
+              myVisit,myBlog,pkgCost,pkgBlog,pkgInsta,
+              agentCo,agentName,agentTel,agentKakao,agentSlogan,comps};
+  const calc=calcAll(data);
+  resultHtml=buildHtml(data,calc);
+
+  const frame=document.getElementById("preview");
+  const doc=frame.contentDocument||frame.contentWindow.document;
+  doc.open();doc.write(resultHtml);doc.close();
+  document.getElementById("resultWrap").className="show";
+  document.getElementById("resultWrap").scrollIntoView({behavior:"smooth"});
+}
+
+function download(){
+  if(!resultHtml)return;
+  const name=document.getElementById("shopName").value.trim()||"제안서";
+  const blob=new Blob([resultHtml],{type:"text/html;charset=utf-8"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;a.download=name+"_매출누수진단리포트.html";
+  document.body.appendChild(a);a.click();
+  document.body.removeChild(a);URL.revokeObjectURL(url);
+  const btn=document.getElementById("dlBtn");
+  btn.textContent="✓ 다운로드 완료!";btn.classList.add("done");
+  setTimeout(()=>{btn.textContent="⬇ HTML 파일 다운로드";btn.classList.remove("done");},2000);
+}
+</script>
+</body>
+</html>
